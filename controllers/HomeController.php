@@ -2,8 +2,11 @@
 
 class HomeController
 {
-    public function index() 
+    public function index()
     {
-        require_once PATH_VIEW . 'main.php';
+        $title = 'AnLaMe - Đặt món ngon online, giao nhanh 20 phút';
+        $view  = 'home';
+
+        require_once PATH_VIEW_MAIN;
     }
 }
