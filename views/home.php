@@ -22,6 +22,7 @@ $dishes = [
         'tag' => 'Bán chạy',
         'icon' => 'bi-basket2',
         'tone' => 'tone-1',
+        'image' => 'assets/images/dishes/com-tam.jpg',
     ],
     [
         'name' => 'Phở bò đặc biệt',
@@ -34,6 +35,7 @@ $dishes = [
         'tag' => 'Món mới',
         'icon' => 'bi-cup-hot',
         'tone' => 'tone-2',
+        'image' => 'assets/images/dishes/pho-bo.jpg',
     ],
     [
         'name' => 'Burger bò phô mai',
@@ -46,6 +48,7 @@ $dishes = [
         'tag' => '-22%',
         'icon' => 'bi-egg-fried',
         'tone' => 'tone-3',
+        'image' => 'assets/images/dishes/burger.jpg',
     ],
     [
         'name' => 'Pizza hải sản',
@@ -58,6 +61,7 @@ $dishes = [
         'tag' => 'Combo',
         'icon' => 'bi-circle-square',
         'tone' => 'tone-4',
+        'image' => 'assets/images/dishes/pizza.jpg',
     ],
     [
         'name' => 'Bún chả Hà Nội',
@@ -70,6 +74,7 @@ $dishes = [
         'tag' => 'Bán chạy',
         'icon' => 'bi-bowl-hot',
         'tone' => 'tone-2',
+        'image' => 'assets/images/dishes/bun-cha.jpg',
     ],
     [
         'name' => 'Gà rán giòn cay',
@@ -82,6 +87,7 @@ $dishes = [
         'tag' => 'Hot',
         'icon' => 'bi-fire',
         'tone' => 'tone-3',
+        'image' => 'assets/images/dishes/ga-ran.jpg',
     ],
     [
         'name' => 'Bánh flan trứng',
@@ -94,6 +100,7 @@ $dishes = [
         'tag' => 'Món mới',
         'icon' => 'bi-cake2',
         'tone' => 'tone-5',
+        'image' => 'assets/images/dishes/flan.jpg',
     ],
     [
         'name' => 'Trà đào cam sả',
@@ -106,6 +113,7 @@ $dishes = [
         'tag' => '-22%',
         'icon' => 'bi-cup-straw',
         'tone' => 'tone-6',
+        'image' => 'assets/images/dishes/tra-dao.jpg',
     ],
 ];
 
@@ -160,9 +168,16 @@ $steps = [
 
             <div class="hero-visual">
                 <span class="hero-blob"></span>
+                <span class="hero-blob hero-blob-2"></span>
+                <span class="hero-spark spark-1"><i class="bi bi-stars"></i></span>
+                <span class="hero-spark spark-2"><i class="bi bi-heart-fill"></i></span>
+                <span class="hero-spark spark-3"><i class="bi bi-stars"></i></span>
+                <span class="hero-sticker sticker-1">Freeship<b>99K+</b></span>
+                <span class="hero-sticker sticker-2">Ngon<b>hết sảy</b></span>
                 <span class="plate-ring"></span>
                 <div class="plate">
-                    <i class="bi bi-bowl-hot"></i>
+                    <img src="<?= BASE_URL ?>assets/images/hero-bowl.jpg" alt="Món ngon nổi bật của AnLaMe" loading="eager"
+                        onerror="this.style.display='none'">
                 </div>
                 <div class="float-card float-rating">
                     <span class="float-icon float-icon-star"><i class="bi bi-star-fill"></i></span>
@@ -218,6 +233,25 @@ $steps = [
     </div>
 </section>
 
+<div class="marquee-wrap" aria-hidden="true">
+    <div class="marquee">
+        <div class="marquee-track">
+            <div class="marquee-group">
+                <span>Món ngon mỗi ngày</span><i class="bi bi-stars"></i>
+                <span>Giao nhanh 20 phút</span><i class="bi bi-stars"></i>
+                <span>Ăn là mê</span><i class="bi bi-stars"></i>
+                <span>Ưu đãi mỗi ngày</span><i class="bi bi-stars"></i>
+            </div>
+            <div class="marquee-group">
+                <span>Món ngon mỗi ngày</span><i class="bi bi-stars"></i>
+                <span>Giao nhanh 20 phút</span><i class="bi bi-stars"></i>
+                <span>Ăn là mê</span><i class="bi bi-stars"></i>
+                <span>Ưu đãi mỗi ngày</span><i class="bi bi-stars"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
 <section class="section" id="thuc-don">
     <div class="container">
         <div class="section-head">
@@ -254,7 +288,9 @@ $steps = [
             <?php foreach ($dishes as $dish): ?>
                 <article class="dish-card reveal">
                     <div class="dish-thumb <?= $dish['tone'] ?>">
-                        <i class="bi <?= $dish['icon'] ?>"></i>
+                        <i class="bi <?= $dish['icon'] ?> dish-fallback"></i>
+                        <img src="<?= BASE_URL . $dish['image'] ?>" alt="<?= $dish['name'] ?>" loading="lazy"
+                            onerror="this.style.display='none'">
                         <span class="dish-tag"><?= $dish['tag'] ?></span>
                         <button class="dish-fav" type="button" aria-label="Yêu thích">
                             <i class="bi bi-heart"></i>
@@ -299,8 +335,10 @@ $steps = [
                 </div>
             </div>
             <div class="promo-art">
-                <i class="bi bi-gift-fill"></i>
                 <span class="promo-ring"></span>
+                <img src="<?= BASE_URL ?>assets/images/promo.jpg" alt="Ưu đãi món ngon AnLaMe" loading="lazy"
+                    onerror="this.style.display='none'">
+                <span class="promo-sticker">-30%</span>
             </div>
         </div>
     </div>
