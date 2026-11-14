@@ -2,12 +2,12 @@
 $formatPrice = fn($price) => number_format($price, 0, ',', '.') . 'đ';
 
 $categories = [
-    ['name' => 'Cơm & Món Việt', 'icon' => 'bi-basket2-fill', 'count' => 42, 'tone' => 'tone-1'],
-    ['name' => 'Phở & Bún',      'icon' => 'bi-cup-hot-fill',  'count' => 28, 'tone' => 'tone-2'],
-    ['name' => 'Burger & Fastfood', 'icon' => 'bi-egg-fried',   'count' => 36, 'tone' => 'tone-3'],
-    ['name' => 'Pizza & Pasta',  'icon' => 'bi-circle-fill',    'count' => 19, 'tone' => 'tone-4'],
-    ['name' => 'Tráng miệng',    'icon' => 'bi-cake2-fill',     'count' => 24, 'tone' => 'tone-5'],
-    ['name' => 'Đồ uống',        'icon' => 'bi-cup-straw',      'count' => 31, 'tone' => 'tone-6'],
+    ['name' => 'Món Việt',      'icon' => 'bi-basket2-fill', 'tone' => 'tone-1'],
+    ['name' => 'Phở & Bún',     'icon' => 'bi-cup-hot-fill', 'tone' => 'tone-2'],
+    ['name' => 'Fastfood',      'icon' => 'bi-egg-fried',    'tone' => 'tone-3'],
+    ['name' => 'Pizza & Pasta', 'icon' => 'bi-circle-fill',  'tone' => 'tone-4'],
+    ['name' => 'Tráng miệng',   'icon' => 'bi-cake2-fill',   'tone' => 'tone-5'],
+    ['name' => 'Đồ uống',       'icon' => 'bi-cup-straw',    'tone' => 'tone-6'],
 ];
 
 $dishes = [
@@ -116,6 +116,8 @@ $dishes = [
         'image' => 'assets/images/dishes/tra-dao.jpg',
     ],
 ];
+
+$categoryCounts = array_count_values(array_column($dishes, 'category'));
 
 $steps = [
     ['icon' => 'bi-hand-index-thumb', 'title' => 'Chọn món yêu thích', 'desc' => 'Lướt thực đơn, thêm món vào giỏ chỉ với một chạm.'],
@@ -252,41 +254,81 @@ $steps = [
     </div>
 </div>
 
-<section class="section" id="thuc-don">
+<section class="section" id="danh-muc">
     <div class="container">
         <div class="section-head">
             <div>
                 <span class="eyebrow">Danh mục</span>
                 <h2 class="section-title">Bạn đang thèm món gì?</h2>
             </div>
-            <a href="#" class="section-link">Xem tất cả <i class="bi bi-arrow-right"></i></a>
+            <a href="#thuc-don" class="section-link">Xem tất cả <i class="bi bi-arrow-right"></i></a>
         </div>
 
         <div class="cat-grid">
             <?php foreach ($categories as $category): ?>
-                <a href="#" class="cat-card">
+                <a href="#thuc-don" class="cat-card" data-filter="<?= htmlspecialchars($category['name'], ENT_QUOTES, 'UTF-8') ?>">
                     <span class="cat-icon <?= $category['tone'] ?>"><i class="bi <?= $category['icon'] ?>"></i></span>
                     <strong><?= $category['name'] ?></strong>
-                    <small><?= $category['count'] ?> món</small>
+                    <small><?= $categoryCounts[$category['name']] ?? 0 ?> món</small>
                 </a>
             <?php endforeach; ?>
         </div>
     </div>
 </section>
 
-<section class="section section-muted">
+<section class="section section-muted" id="thuc-don">
     <div class="container">
         <div class="section-head">
             <div>
                 <span class="eyebrow">Thực đơn hôm nay</span>
                 <h2 class="section-title">Món ngon được yêu thích nhất</h2>
             </div>
-            <a href="#" class="section-link">Xem tất cả <i class="bi bi-arrow-right"></i></a>
+            <a href="#danh-muc" class="section-link">Xem danh mục <i class="bi bi-arrow-right"></i></a>
         </div>
 
-        <div class="dish-grid">
+        <div class="menu-toolbar">
+            <div class="menu-toolbar-main">
+                <div class="menu-search">
+                    <i class="bi bi-search"></i>
+                    <input type="search" id="menuSearch" placeholder="Tìm món theo tên, mô tả..." aria-label="Tìm món ăn" autocomplete="off">
+                    <button class="menu-search-clear" id="menuSearchClear" type="button" aria-label="Xóa tìm kiếm">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+                <label class="menu-sort">
+                    <i class="bi bi-sliders"></i>
+                    <select id="menuSort" aria-label="Sắp xếp món ăn">
+                        <option value="default">Mặc định</option>
+                        <option value="price-asc">Giá thấp đến cao</option>
+                        <option value="price-desc">Giá cao đến thấp</option>
+                        <option value="sold">Bán chạy nhất</option>
+                        <option value="rating">Đánh giá cao nhất</option>
+                    </select>
+                </label>
+            </div>
+
+            <div class="menu-toolbar-bottom">
+                <div class="filter-chips" role="group" aria-label="Lọc theo danh mục">
+                    <button class="chip is-active" type="button" data-filter="all">Tất cả</button>
+                    <?php foreach ($categories as $category): ?>
+                        <button class="chip" type="button" data-filter="<?= htmlspecialchars($category['name'], ENT_QUOTES, 'UTF-8') ?>">
+                            <?= $category['name'] ?>
+                        </button>
+                    <?php endforeach; ?>
+                </div>
+                <p class="menu-result" id="menuResult" aria-live="polite"><?= count($dishes) ?> món ăn</p>
+            </div>
+        </div>
+
+        <div class="dish-grid" id="dishGrid">
             <?php foreach ($dishes as $dish): ?>
-                <article class="dish-card reveal">
+                <article class="dish-card reveal"
+                    data-category="<?= htmlspecialchars($dish['category'], ENT_QUOTES, 'UTF-8') ?>"
+                    data-price="<?= $dish['price'] ?>"
+                    data-old-price="<?= $dish['old_price'] ?>"
+                    data-sold="<?= $dish['sold'] ?>"
+                    data-rating="<?= $dish['rating'] ?>"
+                    data-search="<?= htmlspecialchars($dish['name'] . ' ' . $dish['desc'] . ' ' . $dish['category'], ENT_QUOTES, 'UTF-8') ?>">
                     <div class="dish-thumb <?= $dish['tone'] ?>">
                         <i class="bi <?= $dish['icon'] ?> dish-fallback"></i>
                         <img src="<?= BASE_URL . $dish['image'] ?>" alt="<?= $dish['name'] ?>" loading="lazy"
@@ -318,6 +360,13 @@ $steps = [
                     </div>
                 </article>
             <?php endforeach; ?>
+        </div>
+
+        <div class="menu-empty" id="menuEmpty" hidden>
+            <i class="bi bi-search"></i>
+            <h3>Không tìm thấy món phù hợp</h3>
+            <p>Thử từ khóa khác hoặc bỏ bộ lọc để xem toàn bộ thực đơn nhé.</p>
+            <button class="btn btn-brand" type="button" id="menuReset">Xóa bộ lọc</button>
         </div>
     </div>
 </section>
