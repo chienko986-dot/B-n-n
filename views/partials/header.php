@@ -115,7 +115,7 @@ $currentAction = $_GET['action'] ?? '/';
                 <div class="cart-empty-icon"><i class="bi bi-basket2"></i></div>
                 <h3>Giỏ hàng đang trống</h3>
                 <p>Chọn vài món ngon để bữa ăn hôm nay thêm trọn vị nhé.</p>
-                <a class="btn btn-brand" href="#thuc-don" data-bs-dismiss="offcanvas">Khám phá thực đơn</a>
+                <a class="btn btn-brand" href="#thuc-don" data-cart-navigation>Khám phá thực đơn</a>
             </div>
             <div class="cart-items" id="cartItems" aria-live="polite"></div>
             <button class="cart-clear" id="cartClear" type="button" hidden>
@@ -135,7 +135,7 @@ $currentAction = $_GET['action'] ?? '/';
                 <span>Tổng cộng</span>
                 <strong id="cartTotal">0đ</strong>
             </div>
-            <a class="btn cart-continue-btn" href="#thuc-don" data-bs-dismiss="offcanvas">
+            <a class="btn cart-continue-btn" href="#thuc-don" data-cart-navigation>
                 Tiếp tục chọn món <i class="bi bi-arrow-right"></i>
             </a>
             <p class="cart-payment-note"><i class="bi bi-shield-check"></i> Thanh toán an toàn khi nhận món</p>

@@ -155,6 +155,27 @@
         renderCart();
     }
 
+    var cartDrawer = document.getElementById('cartDrawer');
+    document.querySelectorAll('[data-cart-navigation]').forEach(function (link) {
+        link.addEventListener('click', function (event) {
+            var target = link.getAttribute('href');
+            var targetSection = target && target.charAt(0) === '#'
+                ? document.getElementById(target.slice(1))
+                : null;
+
+            if (!cartDrawer || !targetSection || !window.bootstrap || !window.bootstrap.Offcanvas) {
+                return;
+            }
+
+            event.preventDefault();
+            cartDrawer.addEventListener('hidden.bs.offcanvas', function () {
+                window.history.pushState(null, '', target);
+                targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, { once: true });
+            window.bootstrap.Offcanvas.getOrCreateInstance(cartDrawer).hide();
+        });
+    });
+
     function addToCart(button) {
         var name = button.getAttribute('data-dish') || 'Món ăn';
         var price = Number(button.getAttribute('data-price'));
