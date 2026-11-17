@@ -81,10 +81,15 @@ $currentAction = $_GET['action'] ?? '/';
                             <i class="bi bi-bag"></i>
                             <span class="cart-count">0</span>
                         </a>
-                        <a class="btn btn-login" href="#">
+                        <?php if (isset($_SESSION['user'])): ?>
+                        <span class="small">Xin chào, <?= htmlspecialchars($_SESSION['user']['ho_ten']) ?></span>
+                        <a class="btn btn-login" href="<?= BASE_URL ?>?action=logout"><i class="bi bi-box-arrow-right"></i><span>Đăng xuất</span></a>
+                        <?php else: ?>
+                        <a class="btn btn-login" href="<?= BASE_URL ?>?action=login">
                             <i class="bi bi-person-circle"></i>
                             <span>Đăng nhập</span>
                         </a>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
