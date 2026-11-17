@@ -86,6 +86,7 @@ $currentAction = $_GET['action'] ?? '/';
                             <i class="bi bi-person-circle"></i>
                             <span>Đăng nhập</span>
                         </a>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
