@@ -4,7 +4,9 @@ class UserModel extends BaseModel
 {
     public function findByEmail($email)
     {
-        $query = $this->pdo->prepare('SELECT * FROM NGUOIDUNG WHERE email = ? LIMIT 1');
+        $query = $this->pdo->prepare(
+            'SELECT id, ho_ten, email, mat_khau FROM NGUOIDUNG WHERE email = ? LIMIT 1'
+        );
         $query->execute([$email]);
         return $query->fetch();
     }
