@@ -67,6 +67,187 @@
         });
     });
 
+    var dishGrid = document.getElementById('dishGrid');
+
+    if (dishGrid) {
+        var dishCards = Array.prototype.slice.call(dishGrid.querySelectorAll('.dish-card'));
+        var filterChips = Array.prototype.slice.call(document.querySelectorAll('.filter-chips .chip'));
+        var categoryCards = Array.prototype.slice.call(document.querySelectorAll('.cat-card[data-filter]'));
+        var menuSearch = document.getElementById('menuSearch');
+        var menuSearchClear = document.getElementById('menuSearchClear');
+        var menuSort = document.getElementById('menuSort');
+        var menuResult = document.getElementById('menuResult');
+        var menuEmpty = document.getElementById('menuEmpty');
+        var menuReset = document.getElementById('menuReset');
+        var headerSearchInput = document.querySelector('.search-form input[type="search"]');
+        var originalOrder = dishCards.slice();
+        var currentQuery = '';
+        var currentCategory = 'all';
+
+        function normalize(value) {
+            return (value || '')
+                .toString()
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/đ/g, 'd');
+        }
+
+        function toggleClearButton() {
+            if (menuSearchClear) {
+                menuSearchClear.classList.toggle('is-visible', currentQuery.length > 0);
+            }
+        }
+
+        function applyFilters() {
+            var query = normalize(currentQuery.trim());
+            var visible = 0;
+
+            dishCards.forEach(function (card) {
+                var haystack = normalize(card.getAttribute('data-search') || card.textContent);
+                var matchesQuery = !query || haystack.indexOf(query) !== -1;
+                var matchesCategory = currentCategory === 'all' ||
+                    card.getAttribute('data-category') === currentCategory;
+                var isMatch = matchesQuery && matchesCategory;
+
+                card.classList.toggle('is-hidden', !isMatch);
+
+                if (isMatch) {
+                    card.classList.add('is-visible');
+                    visible += 1;
+                }
+            });
+
+            if (menuEmpty) {
+                menuEmpty.hidden = visible !== 0;
+            }
+            if (menuResult) {
+                menuResult.textContent = visible + ' món ăn';
+            }
+        }
+
+        function applySort() {
+            var value = menuSort ? menuSort.value : 'default';
+            var sorted = dishCards.slice();
+
+            if (value === 'price-asc' || value === 'price-desc') {
+                sorted.sort(function (a, b) {
+                    var diff = parseFloat(a.getAttribute('data-price')) - parseFloat(b.getAttribute('data-price'));
+                    return value === 'price-asc' ? diff : -diff;
+                });
+            } else if (value === 'sold') {
+                sorted.sort(function (a, b) {
+                    return parseFloat(b.getAttribute('data-sold')) - parseFloat(a.getAttribute('data-sold'));
+                });
+            } else if (value === 'rating') {
+                sorted.sort(function (a, b) {
+                    return parseFloat(b.getAttribute('data-rating')) - parseFloat(a.getAttribute('data-rating'));
+                });
+            } else {
+                sorted = originalOrder.slice();
+            }
+
+            sorted.forEach(function (card) {
+                dishGrid.appendChild(card);
+            });
+        }
+
+        function setCategory(category) {
+            currentCategory = category || 'all';
+
+            filterChips.forEach(function (chip) {
+                chip.classList.toggle('is-active', chip.getAttribute('data-filter') === currentCategory);
+            });
+        }
+
+        function setQuery(value, source) {
+            currentQuery = value || '';
+
+            if (menuSearch && source !== menuSearch) {
+                menuSearch.value = currentQuery;
+            }
+            if (headerSearchInput && source !== headerSearchInput) {
+                headerSearchInput.value = currentQuery;
+            }
+
+            toggleClearButton();
+            applyFilters();
+        }
+
+        filterChips.forEach(function (chip) {
+            chip.addEventListener('click', function () {
+                setCategory(chip.getAttribute('data-filter'));
+                applyFilters();
+            });
+        });
+
+        categoryCards.forEach(function (card) {
+            card.addEventListener('click', function () {
+                setCategory(card.getAttribute('data-filter'));
+                if (menuSort) {
+                    menuSort.value = 'default';
+                }
+                applySort();
+                applyFilters();
+            });
+        });
+
+        if (menuSearch) {
+            menuSearch.addEventListener('input', function () {
+                setQuery(menuSearch.value, menuSearch);
+            });
+        }
+
+        if (headerSearchInput) {
+            headerSearchInput.addEventListener('input', function () {
+                setQuery(headerSearchInput.value, headerSearchInput);
+            });
+
+            var headerSearchForm = headerSearchInput.closest('form');
+            if (headerSearchForm) {
+                headerSearchForm.addEventListener('submit', function (event) {
+                    event.preventDefault();
+                    setQuery(headerSearchInput.value, headerSearchInput);
+
+                    var menuSection = document.getElementById('thuc-don');
+                    if (menuSection) {
+                        menuSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            }
+        }
+
+        if (menuSearchClear) {
+            menuSearchClear.addEventListener('click', function () {
+                setQuery('', menuSearch);
+                if (menuSearch) {
+                    menuSearch.focus();
+                }
+            });
+        }
+
+        if (menuSort) {
+            menuSort.addEventListener('change', function () {
+                applySort();
+                applyFilters();
+            });
+        }
+
+        if (menuReset) {
+            menuReset.addEventListener('click', function () {
+                setCategory('all');
+                setQuery('', menuSearch);
+                if (menuSort) {
+                    menuSort.value = 'default';
+                }
+                applySort();
+                applyFilters();
+            });
+        }
+
+        applyFilters();
+    }
+
     var revealItems = document.querySelectorAll('.reveal');
 
     if ('IntersectionObserver' in window && revealItems.length) {
