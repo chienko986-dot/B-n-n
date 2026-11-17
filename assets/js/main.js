@@ -4,7 +4,180 @@
     var header = document.getElementById('siteHeader');
     var backToTop = document.getElementById('backToTop');
     var cartCountEl = document.querySelector('.cart-count');
-    var cartCount = cartCountEl ? parseInt(cartCountEl.textContent, 10) || 0 : 0;
+    var cartItemsEl = document.getElementById('cartItems');
+    var cartEmptyEl = document.getElementById('cartEmpty');
+    var cartSummaryEl = document.getElementById('cartSummary');
+    var cartClearButton = document.getElementById('cartClear');
+    var cartShippingMessage = document.getElementById('cartShippingMessage');
+    var cartShippingProgress = document.getElementById('cartShippingProgress');
+    var cartSubtotalEl = document.getElementById('cartSubtotal');
+    var cartDeliveryEl = document.getElementById('cartDelivery');
+    var cartTotalEl = document.getElementById('cartTotal');
+    var freeShippingThreshold = 99000;
+    var deliveryFee = 15000;
+    var cart = [];
+    var savedCart = localStorage.getItem('anlame-cart');
+
+    if (savedCart) {
+        try {
+            var parsedCart = JSON.parse(savedCart);
+            if (Array.isArray(parsedCart)) {
+                cart = parsedCart.filter(function (item) {
+                    return item && typeof item.name === 'string' &&
+                        Number.isFinite(Number(item.price)) && Number(item.price) > 0 &&
+                        Number.isInteger(Number(item.quantity)) && Number(item.quantity) > 0;
+                }).map(function (item) {
+                    return {
+                        name: item.name,
+                        price: Number(item.price),
+                        image: typeof item.image === 'string' ? item.image : '',
+                        quantity: Number(item.quantity)
+                    };
+                });
+            }
+        } catch (error) {
+            console.warn('Không thể đọc giỏ hàng đã lưu; giỏ hàng sẽ được làm mới.', error);
+        }
+    }
+
+    function formatPrice(price) {
+        return new Intl.NumberFormat('vi-VN').format(price) + 'đ';
+    }
+
+    function saveCart() {
+        localStorage.setItem('anlame-cart', JSON.stringify(cart));
+    }
+
+    function renderCart() {
+        if (!cartItemsEl) {
+            return;
+        }
+
+        var itemCount = cart.reduce(function (total, item) {
+            return total + item.quantity;
+        }, 0);
+        var subtotal = cart.reduce(function (total, item) {
+            return total + item.price * item.quantity;
+        }, 0);
+        var hasItems = cart.length > 0;
+
+        cartCountEl.textContent = itemCount;
+        cartEmptyEl.hidden = hasItems;
+        cartSummaryEl.hidden = !hasItems;
+        cartClearButton.hidden = !hasItems;
+        cartItemsEl.replaceChildren();
+
+        cart.forEach(function (item, index) {
+            var row = document.createElement('article');
+            row.className = 'cart-item';
+
+            var image = document.createElement('img');
+            image.className = 'cart-item-image';
+            image.src = item.image;
+            image.alt = '';
+            image.loading = 'lazy';
+            image.onerror = function () {
+                image.classList.add('is-missing');
+                image.removeAttribute('src');
+            };
+
+            var details = document.createElement('div');
+            details.className = 'cart-item-details';
+            var name = document.createElement('h3');
+            name.className = 'cart-item-name';
+            name.textContent = item.name;
+            var price = document.createElement('strong');
+            price.className = 'cart-item-price';
+            price.textContent = formatPrice(item.price);
+
+            var controls = document.createElement('div');
+            controls.className = 'cart-quantity';
+            var decrease = document.createElement('button');
+            decrease.type = 'button';
+            decrease.setAttribute('aria-label', 'Giảm số lượng ' + item.name);
+            decrease.innerHTML = '<i class="bi bi-dash"></i>';
+            decrease.addEventListener('click', function () {
+                updateQuantity(index, -1);
+            });
+            var quantity = document.createElement('span');
+            quantity.textContent = item.quantity;
+            var increase = document.createElement('button');
+            increase.type = 'button';
+            increase.setAttribute('aria-label', 'Tăng số lượng ' + item.name);
+            increase.innerHTML = '<i class="bi bi-plus"></i>';
+            increase.addEventListener('click', function () {
+                updateQuantity(index, 1);
+            });
+            controls.append(decrease, quantity, increase);
+
+            var actions = document.createElement('div');
+            actions.className = 'cart-item-actions';
+            var remove = document.createElement('button');
+            remove.type = 'button';
+            remove.className = 'cart-item-remove';
+            remove.setAttribute('aria-label', 'Xóa ' + item.name + ' khỏi giỏ hàng');
+            remove.innerHTML = '<i class="bi bi-trash3"></i><span>Xóa</span>';
+            remove.addEventListener('click', function () {
+                removeItem(index);
+            });
+            actions.append(controls, remove);
+
+            details.append(name, price, actions);
+            row.append(image, details);
+            cartItemsEl.appendChild(row);
+        });
+
+        var delivery = subtotal >= freeShippingThreshold || !hasItems ? 0 : deliveryFee;
+        var remaining = Math.max(0, freeShippingThreshold - subtotal);
+        cartSubtotalEl.textContent = formatPrice(subtotal);
+        cartDeliveryEl.textContent = delivery ? formatPrice(delivery) : 'Miễn phí';
+        cartTotalEl.textContent = formatPrice(subtotal + delivery);
+        cartShippingMessage.textContent = remaining > 0
+            ? 'Mua thêm ' + formatPrice(remaining) + ' để được miễn phí giao hàng'
+            : 'Bạn được miễn phí giao hàng!';
+        cartShippingProgress.style.width = Math.min(100, subtotal / freeShippingThreshold * 100) + '%';
+        cartShippingProgress.parentElement.setAttribute('aria-valuenow',
+            Math.round(Math.min(100, subtotal / freeShippingThreshold * 100)));
+    }
+
+    function updateQuantity(index, change) {
+        cart[index].quantity += change;
+        if (cart[index].quantity <= 0) {
+            cart.splice(index, 1);
+        }
+        saveCart();
+        renderCart();
+    }
+
+    function removeItem(index) {
+        cart.splice(index, 1);
+        saveCart();
+        renderCart();
+    }
+
+    function addToCart(button) {
+        var name = button.getAttribute('data-dish') || 'Món ăn';
+        var price = Number(button.getAttribute('data-price'));
+        var image = button.getAttribute('data-image') || '';
+        var existingItem = cart.find(function (item) {
+            return item.name === name;
+        });
+
+        if (!Number.isFinite(price) || price <= 0) {
+            console.error('Không thể thêm món vào giỏ hàng: giá món không hợp lệ.');
+            return;
+        }
+
+        if (existingItem) {
+            existingItem.quantity += 1;
+        } else {
+            cart.push({ name: name, price: price, image: image, quantity: 1 });
+        }
+
+        saveCart();
+        renderCart();
+        showToast('Đã thêm "' + name + '" vào giỏ hàng');
+    }
 
     function onScroll() {
         var y = window.scrollY || window.pageYOffset;
@@ -42,18 +215,21 @@
         }, 2200);
     }
 
+    renderCart();
+
     document.querySelectorAll('.btn-add').forEach(function (button) {
         button.addEventListener('click', function () {
-            cartCount += 1;
-
-            if (cartCountEl) {
-                cartCountEl.textContent = cartCount;
-            }
-
-            var dishName = button.getAttribute('data-dish') || 'Món ăn';
-            showToast('Đã thêm "' + dishName + '" vào giỏ hàng');
+            addToCart(button);
         });
     });
+
+    if (cartClearButton) {
+        cartClearButton.addEventListener('click', function () {
+            cart = [];
+            saveCart();
+            renderCart();
+        });
+    }
 
     document.querySelectorAll('.dish-fav').forEach(function (button) {
         button.addEventListener('click', function () {

@@ -353,7 +353,10 @@ $steps = [
                                     <del><?= $formatPrice($dish['old_price']) ?></del>
                                 <?php endif; ?>
                             </div>
-                            <button class="btn btn-add" type="button" data-dish="<?= $dish['name'] ?>">
+                            <button class="btn btn-add" type="button"
+                                data-dish="<?= htmlspecialchars($dish['name'], ENT_QUOTES, 'UTF-8') ?>"
+                                data-price="<?= (int) $dish['price'] ?>"
+                                data-image="<?= htmlspecialchars(BASE_URL . $dish['image'], ENT_QUOTES, 'UTF-8') ?>">
                                 <i class="bi bi-plus-lg"></i>
                             </button>
                         </div>
