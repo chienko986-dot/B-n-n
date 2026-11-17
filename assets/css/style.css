@@ -1908,6 +1908,32 @@ h6 {
     font-weight: 700;
 }
 
+.cart-item-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem;
+}
+
+.cart-item-remove {
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+    padding: .35rem .45rem;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--muted);
+    font-size: .74rem;
+    cursor: pointer;
+    transition: background .2s ease, color .2s ease;
+}
+
+.cart-item-remove:hover {
+    background: #fff0ed;
+    color: var(--brand-700);
+}
+
 .cart-clear {
     margin-top: 1rem;
     padding: 0;

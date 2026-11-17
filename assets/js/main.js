@@ -110,7 +110,19 @@
             });
             controls.append(decrease, quantity, increase);
 
-            details.append(name, price, controls);
+            var actions = document.createElement('div');
+            actions.className = 'cart-item-actions';
+            var remove = document.createElement('button');
+            remove.type = 'button';
+            remove.className = 'cart-item-remove';
+            remove.setAttribute('aria-label', 'Xóa ' + item.name + ' khỏi giỏ hàng');
+            remove.innerHTML = '<i class="bi bi-trash3"></i><span>Xóa</span>';
+            remove.addEventListener('click', function () {
+                removeItem(index);
+            });
+            actions.append(controls, remove);
+
+            details.append(name, price, actions);
             row.append(image, details);
             cartItemsEl.appendChild(row);
         });
@@ -133,6 +145,12 @@
         if (cart[index].quantity <= 0) {
             cart.splice(index, 1);
         }
+        saveCart();
+        renderCart();
+    }
+
+    function removeItem(index) {
+        cart.splice(index, 1);
         saveCart();
         renderCart();
     }
