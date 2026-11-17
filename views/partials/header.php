@@ -82,10 +82,23 @@ $currentAction = $_GET['action'] ?? '/';
                             <i class="bi bi-bag"></i>
                             <span class="cart-count">0</span>
                         </button>
-                        <a class="btn btn-login" href="#">
-                            <i class="bi bi-person-circle"></i>
-                            <span>Đăng nhập</span>
-                        </a>
+                        <?php if (!empty($_SESSION['user'])): ?>
+                            <span class="auth-user" title="<?= htmlspecialchars($_SESSION['user']['ho_ten'], ENT_QUOTES, 'UTF-8') ?>">
+                                <i class="bi bi-person-circle"></i>
+                                <?= htmlspecialchars($_SESSION['user']['ho_ten'], ENT_QUOTES, 'UTF-8') ?>
+                            </span>
+                            <form class="logout-form" method="post" action="<?= BASE_URL ?>?action=logout">
+                                <input type="hidden" name="_csrf_token" value="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>">
+                                <button class="btn btn-login" type="submit">
+                                    <i class="bi bi-box-arrow-right"></i><span>Đăng xuất</span>
+                                </button>
+                            </form>
+                        <?php else: ?>
+                            <a class="btn btn-login" href="<?= BASE_URL ?>?action=login">
+                                <i class="bi bi-person-circle"></i><span>Đăng nhập</span>
+                            </a>
+                            <a class="btn btn-register" href="<?= BASE_URL ?>?action=register">Đăng ký</a>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
