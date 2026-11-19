@@ -4,7 +4,25 @@
 // (vi du: localhost:8000 cua php -S hoac localhost cua Apache/Laragon)
 $httpProtocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
 $httpHost = $_SERVER['HTTP_HOST'] ?? 'localhost';
-$scriptDir = dirname($_SERVER['SCRIPT_NAME'] ?? '/');
+$rawScriptName = str_replace('\\', '/', $_SERVER['SCRIPT_NAME'] ?? '/');
+$scriptName = rtrim($rawScriptName, '/');
+$scriptDir = ($rawScriptName !== $scriptName)
+    ? ($scriptName ?: '/')
+    : dirname($scriptName ?: '/');
+
+// Một số cấu hình Apache chạy front controller như /index.php dù URL
+// thực tế nằm trong thư mục con (ví dụ /B-n-n/). Khi đó dùng thư mục URL.
+if ($scriptDir === '/' || $scriptDir === '\\') {
+    $requestPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
+    $requestPath = str_replace('\\', '/', $requestPath);
+
+    if (str_ends_with($requestPath, '/')) {
+        $scriptDir = rtrim($requestPath, '/') ?: '/';
+    } elseif (basename($requestPath) === 'index.php') {
+        $scriptDir = dirname($requestPath);
+    }
+}
+
 $basePath = rtrim($scriptDir, '/');
 
 if ($basePath === '/' || $basePath === '\\') {

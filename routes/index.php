@@ -5,26 +5,57 @@ $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 $isPost = ($method === 'POST');
 
 match ($action) {
-    // ---------- TRANG CHU ----------
-    '/'         => (new HomeController)->index(),
+    // ---------- TRANG CHỦ ----------
+    '/'                     => (new HomeController)->index(),
 
-    // ---------- TAI KHOAN ----------
-    'register'  => (new AuthController)->register(),
-    'login'     => (new AuthController)->login(),
-    'logout'    => (new AuthController)->logout(),
+    // ---------- TÀI KHOẢN ----------
+    'register'              => (new AuthController)->register(),
+    'login'                 => (new AuthController)->login(),
+    'logout'                => (new AuthController)->logout(),
 
-    // ---------- GIO HANG (PHP Session) ----------
-    'cart'        => (new CartController)->index(),
-    'cart-add'    => $isPost ? (new CartController)->add()    : redirect_to(BASE_URL . '?action=cart'),
-    'cart-update' => $isPost ? (new CartController)->update() : redirect_to(BASE_URL . '?action=cart'),
-    'cart-remove' => $isPost ? (new CartController)->remove() : redirect_to(BASE_URL . '?action=cart'),
-    'cart-clear'  => $isPost ? (new CartController)->clear()  : redirect_to(BASE_URL . '?action=cart'),
+    // ---------- GIỎ HÀNG (PHP Session) ----------
+    'cart'                  => (new CartController)->index(),
+    'cart-add'              => $isPost ? (new CartController)->add()    : redirect_to(BASE_URL . '?action=cart'),
+    'cart-update'           => $isPost ? (new CartController)->update() : redirect_to(BASE_URL . '?action=cart'),
+    'cart-remove'           => $isPost ? (new CartController)->remove() : redirect_to(BASE_URL . '?action=cart'),
+    'cart-clear'            => $isPost ? (new CartController)->clear()  : redirect_to(BASE_URL . '?action=cart'),
 
-    // ---------- DAT HANG ----------
-    'checkout'      => (new CheckoutController)->index(),
-    'checkout-post' => $isPost ? (new CheckoutController)->placeOrder() : redirect_to(BASE_URL . '?action=cart'),
-    'order-success' => (new CheckoutController)->success(),
+    // ---------- ĐẶT HÀNG (CHECKOUT) ----------
+    'checkout'              => (new CheckoutController)->index(),
+    'checkout-post'         => $isPost ? (new CheckoutController)->placeOrder() : redirect_to(BASE_URL . '?action=cart'),
+    'order-success'         => (new CheckoutController)->success(),
 
-    // Action khong ton tai -> ve trang chu
-    default     => (new HomeController)->index(),
+    // ---------- QUẢN TRỊ VIÊN (ADMIN) ----------
+    'admin'                 => (new AdminController)->dashboard(),
+    'admin/dashboard'       => (new AdminController)->dashboard(),
+    
+    // Quản lý món ăn
+    'admin/dishes'          => (new AdminController)->dishes(),
+    'admin/dishes/create'   => (new AdminController)->dishCreate(),
+    'admin/dishes/edit'     => (new AdminController)->dishEdit(),
+    'admin/dishes/delete'   => (new AdminController)->dishDelete(),
+
+    // Quản lý danh mục
+    'admin/categories'        => (new AdminController)->categories(),
+    'admin/categories/create' => (new AdminController)->categoryCreate(),
+    'admin/categories/edit'   => (new AdminController)->categoryEdit(),
+    'admin/categories/delete' => (new AdminController)->categoryDelete(),
+
+    // Quản lý đơn hàng
+    'admin/orders'               => (new AdminController)->orders(),
+    'admin/orders/detail'        => (new AdminController)->orderDetail(),
+    'admin/orders/update-status' => (new AdminController)->orderUpdateStatus(),
+
+    // Quản lý người dùng & phân quyền
+    'admin/users'             => (new AdminController)->users(),
+    'admin/users/toggle-role' => (new AdminController)->userToggleRole(),
+
+    // Quản lý đánh giá
+    'admin/reviews'        => (new AdminController)->reviews(),
+    'admin/reviews/delete' => (new AdminController)->reviewDelete(),
+
+    // Nạp dữ liệu mẫu
+    'admin/seed'           => (new AdminController)->seedData(),
+
+    default                => (new HomeController)->index(),
 };
