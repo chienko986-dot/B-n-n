@@ -73,6 +73,10 @@ $currentAction = $_GET['action'] ?? '/';
                             <a class="nav-link" href="#khuyen-mai">Khuyến mãi</a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link <?= $currentAction === 'order-detail' ? 'active' : '' ?>"
+                               href="<?= BASE_URL ?>?action=order-detail">Tra cứu đơn hàng</a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" href="#lien-he">Liên hệ</a>
                         </li>
                     </ul>

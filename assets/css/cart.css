@@ -781,6 +781,46 @@
     word-break: break-word;
 }
 
+.order-lookup {
+    margin-bottom: 1.4rem;
+}
+
+.order-lookup-form {
+    display: flex;
+    align-items: center;
+    gap: .8rem;
+    flex-wrap: wrap;
+}
+
+.order-lookup-form .form-control {
+    flex: 1 1 260px;
+}
+
+.order-line-thumb {
+    position: relative;
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    border-radius: 12px;
+    background: var(--brand-soft);
+    color: var(--brand-700);
+    font-size: 1.2rem;
+}
+
+.order-line-thumb img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.order-lines-detail .order-line {
+    grid-template-columns: 44px auto minmax(0, 1fr) auto;
+}
+
 .success-actions {
     display: flex;
     justify-content: center;

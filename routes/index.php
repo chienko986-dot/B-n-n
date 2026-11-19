@@ -24,6 +24,7 @@ match ($action) {
     'checkout'      => (new CheckoutController)->index(),
     'checkout-post' => $isPost ? (new CheckoutController)->placeOrder() : redirect_to(BASE_URL . '?action=cart'),
     'order-success' => (new CheckoutController)->success(),
+    'order-detail'  => (new CheckoutController)->detail(),
 
     // Action khong ton tai -> ve trang chu
     default     => (new HomeController)->index(),

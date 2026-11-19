@@ -189,7 +189,13 @@ class OrderModel extends BaseModel
             return null;
         }
 
-        $stmt = $this->pdo->prepare("SELECT * FROM donhang WHERE ma_don = ? LIMIT 1");
+        $sql = "SELECT d.*, tt.phuong_thuc, tt.trang_thai AS trang_thai_thanh_toan
+                FROM donhang d
+                LEFT JOIN thanhtoan tt ON tt.donhang_id = d.id
+                WHERE d.ma_don = ?
+                LIMIT 1";
+
+        $stmt = $this->pdo->prepare($sql);
         $stmt->execute([$maDon]);
         $donhang = $stmt->fetch();
 
