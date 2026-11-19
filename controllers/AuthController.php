@@ -41,7 +41,7 @@ class AuthController
                         $id = $userModel->create($name, $email, $password);
                         session_regenerate_id(true);
                         unset($_SESSION['_csrf_token']);
-                        $_SESSION['user'] = ['id' => $id, 'ho_ten' => $name, 'email' => $email];
+                        $_SESSION['user'] = ['id' => $id, 'ho_ten' => $name, 'email' => $email, 'vai_tro' => 'khach'];
                         header('Location: ' . BASE_URL);
                         exit;
                     } catch (PDOException $exception) {
@@ -87,8 +87,16 @@ class AuthController
                         'id' => (int) $user['id'],
                         'ho_ten' => $user['ho_ten'],
                         'email' => $user['email'],
+                        'vai_tro' => $user['vai_tro'] ?? 'khach',
                     ];
-                    header('Location: ' . BASE_URL);
+                    
+                    if (!empty($_GET['redirect'])) {
+                        header('Location: ' . BASE_URL . '?action=' . urlencode($_GET['redirect']));
+                    } elseif (($user['vai_tro'] ?? '') === 'admin') {
+                        header('Location: ' . BASE_URL . '?action=admin');
+                    } else {
+                        header('Location: ' . BASE_URL);
+                    }
                     exit;
                 }
 
