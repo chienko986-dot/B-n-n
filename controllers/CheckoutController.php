@@ -120,6 +120,29 @@ class CheckoutController
         require_once PATH_VIEW_MAIN;
     }
 
+    public function detail()
+    {
+        $maDonYeuCau = $_GET['ma_don'] ?? $_SESSION['ma_don_hang'] ?? '';
+        $maDon = is_string($maDonYeuCau) ? trim($maDonYeuCau) : '';
+
+        $donHang = null;
+
+        if ($maDon !== '') {
+            $donHang = (new OrderModel())->findByMaDon($maDon);
+
+            if ($donHang) {
+                $donHang['donhang']['tong_thanh_toan'] =
+                    (float) $donHang['donhang']['tong_tien'] + (float) $donHang['donhang']['phi_giao_hang'];
+            }
+        }
+
+        $title   = 'Chi tiết đơn hàng - AnLaMe';
+        $view    = 'order-detail';
+        $maDon   = $donHang ? $donHang['donhang']['ma_don'] : $maDon;
+
+        require_once PATH_VIEW_MAIN;
+    }
+
     /**
      * Lay du lieu tu form.
      * @return array
