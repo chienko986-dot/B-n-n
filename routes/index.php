@@ -1,14 +1,31 @@
 <?php
 
 $action = $_GET['action'] ?? '/';
+$method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+$isPost = ($method === 'POST');
 
 match ($action) {
+    // ---------- TRANG CHỦ ----------
     '/'                     => (new HomeController)->index(),
+
+    // ---------- TÀI KHOẢN ----------
     'register'              => (new AuthController)->register(),
     'login'                 => (new AuthController)->login(),
     'logout'                => (new AuthController)->logout(),
 
-    // Admin Routes
+    // ---------- GIỎ HÀNG (PHP Session) ----------
+    'cart'                  => (new CartController)->index(),
+    'cart-add'              => $isPost ? (new CartController)->add()    : redirect_to(BASE_URL . '?action=cart'),
+    'cart-update'           => $isPost ? (new CartController)->update() : redirect_to(BASE_URL . '?action=cart'),
+    'cart-remove'           => $isPost ? (new CartController)->remove() : redirect_to(BASE_URL . '?action=cart'),
+    'cart-clear'            => $isPost ? (new CartController)->clear()  : redirect_to(BASE_URL . '?action=cart'),
+
+    // ---------- ĐẶT HÀNG (CHECKOUT) ----------
+    'checkout'              => (new CheckoutController)->index(),
+    'checkout-post'         => $isPost ? (new CheckoutController)->placeOrder() : redirect_to(BASE_URL . '?action=cart'),
+    'order-success'         => (new CheckoutController)->success(),
+
+    // ---------- QUẢN TRỊ VIÊN (ADMIN) ----------
     'admin'                 => (new AdminController)->dashboard(),
     'admin/dashboard'       => (new AdminController)->dashboard(),
     
@@ -29,7 +46,7 @@ match ($action) {
     'admin/orders/detail'        => (new AdminController)->orderDetail(),
     'admin/orders/update-status' => (new AdminController)->orderUpdateStatus(),
 
-    // Quản lý người dùng
+    // Quản lý người dùng & phân quyền
     'admin/users'             => (new AdminController)->users(),
     'admin/users/toggle-role' => (new AdminController)->userToggleRole(),
 
@@ -42,4 +59,3 @@ match ($action) {
 
     default                => (new HomeController)->index(),
 };
-

@@ -1,5 +1,7 @@
 <?php
 
+// Tu dong phat hien BASE_URL de khong bi loi session khi chay tren port khac
+// (vi du: localhost:8000 cua php -S hoac localhost cua Apache/Laragon)
 $httpProtocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
 $httpHost = $_SERVER['HTTP_HOST'] ?? 'localhost';
 $rawScriptName = str_replace('\\', '/', $_SERVER['SCRIPT_NAME'] ?? '/');
@@ -38,6 +40,7 @@ define('PATH_ASSETS_UPLOADS', PATH_ROOT . 'assets/uploads/');
 define('PATH_CONTROLLER', PATH_ROOT . 'controllers/');
 define('PATH_MODEL', PATH_ROOT . 'models/');
 
+// Ket noi CSDL - co the ghi de bang bien moi truong, mac dinh la website_ban_do_an
 define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
 define('DB_PORT', getenv('DB_PORT') ?: '3306');
 define('DB_USERNAME', getenv('DB_USERNAME') ?: 'root');
@@ -47,4 +50,7 @@ define('DB_OPTIONS', [
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
 ]);
-           
+
+// Quy tac phi giao hang (dung cho tinh nang dat hang)
+define('PHI_GIAO_HANG',    30000);  // phi giao hang mac dinh
+define('MIEN_PHI_GIAO_TU', 99000);  // mien phi giao hang voi don tu 99.000đ

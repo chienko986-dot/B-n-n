@@ -7,7 +7,7 @@
             </ol>
         </nav>
         <div class="d-flex align-items-center gap-3">
-            <h1 class="h3 fw-bold text-dark mb-0">Đơn hàng #<?= $order['id'] ?></h1>
+            <h1 class="h3 fw-bold text-dark mb-0">Đơn hàng <?= !empty($order['ma_don']) ? htmlspecialchars($order['ma_don']) : '#' . $order['id'] ?></h1>
             <?= order_status_badge($order['trang_thai']) ?>
         </div>
     </div>
@@ -162,23 +162,23 @@
             <div class="admin-card-body">
                 <div class="mb-3">
                     <label class="text-muted small d-block">Người nhận hàng:</label>
-                    <strong class="text-dark fs-6"><?= htmlspecialchars($order['ten_nguoi_nhan'] ?? $order['ho_ten'] ?? 'Chưa rõ') ?></strong>
+                    <strong class="text-dark fs-6"><?= htmlspecialchars($order['ten_khach_hang'] ?? $order['ten_nguoi_nhan'] ?? $order['ho_ten'] ?? 'Chưa rõ') ?></strong>
                 </div>
                 <div class="mb-3">
                     <label class="text-muted small d-block">Số điện thoại:</label>
-                    <a href="tel:<?= htmlspecialchars($order['sdt_nhan'] ?? '') ?>" class="fw-bold text-primary text-decoration-none">
-                        <i class="bi bi-telephone-fill me-1"></i><?= htmlspecialchars($order['sdt_nhan'] ?? $order['sdt_nguoidung'] ?? 'Chưa có') ?>
+                    <a href="tel:<?= htmlspecialchars($order['sdt_khach_hang'] ?? $order['sdt_nhan'] ?? '') ?>" class="fw-bold text-primary text-decoration-none">
+                        <i class="bi bi-telephone-fill me-1"></i><?= htmlspecialchars($order['sdt_khach_hang'] ?? $order['sdt_nhan'] ?? $order['sdt_nguoidung'] ?? 'Chưa có') ?>
                     </a>
                 </div>
                 <div class="mb-3">
                     <label class="text-muted small d-block">Địa chỉ giao chi tiết:</label>
                     <div class="p-2 rounded bg-light border text-dark">
-                        <?= htmlspecialchars($order['dia_chi_chi_tiet'] ?? 'Chưa cập nhật') ?>
+                        <?= htmlspecialchars($order['dia_chi_giao_hang'] ?? $order['dia_chi_chi_tiet'] ?? 'Chưa cập nhật') ?>
                     </div>
                 </div>
                 <div>
                     <label class="text-muted small d-block">Tài khoản đặt đơn:</label>
-                    <span class="small"><?= htmlspecialchars($order['ho_ten'] ?? '') ?> (<?= htmlspecialchars($order['email'] ?? '') ?>)</span>
+                    <span class="small"><?= htmlspecialchars($order['ho_ten'] ?? $order['ten_khach_hang'] ?? '') ?> (<?= htmlspecialchars($order['email_khach_hang'] ?? $order['email'] ?? '') ?>)</span>
                 </div>
             </div>
         </div>

@@ -154,12 +154,12 @@
                                 <tr>
                                     <td>
                                         <a href="<?= BASE_URL ?>?action=admin/orders/detail&id=<?= $order['id'] ?>" class="fw-bold text-decoration-none text-primary">
-                                            #<?= $order['id'] ?>
+                                            <?= !empty($order['ma_don']) ? htmlspecialchars($order['ma_don']) : '#' . $order['id'] ?>
                                         </a>
                                     </td>
                                     <td>
-                                        <div class="fw-semibold"><?= htmlspecialchars($order['ten_nguoi_nhan'] ?? $order['ho_ten'] ?? 'Khách vãng lai') ?></div>
-                                        <small class="text-muted"><?= htmlspecialchars($order['sdt_nhan'] ?? '') ?></small>
+                                        <div class="fw-semibold"><?= htmlspecialchars($order['ten_khach_hang'] ?? $order['ten_nguoi_nhan'] ?? $order['ho_ten'] ?? 'Khách vãng lai') ?></div>
+                                        <small class="text-muted"><?= htmlspecialchars($order['sdt_khach_hang'] ?? $order['sdt_nhan'] ?? '') ?></small>
                                     </td>
                                     <td>
                                         <small class="text-muted"><?= date('H:i d/m/Y', strtotime($order['ngay_dat'])) ?></small>

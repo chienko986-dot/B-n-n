@@ -105,16 +105,16 @@
                         <tr>
                             <td>
                                 <a href="<?= BASE_URL ?>?action=admin/orders/detail&id=<?= $order['id'] ?>" class="fw-bold text-decoration-none text-primary">
-                                    #<?= $order['id'] ?>
+                                    <?= !empty($order['ma_don']) ? htmlspecialchars($order['ma_don']) : '#' . $order['id'] ?>
                                 </a>
                             </td>
                             <td>
-                                <div class="fw-bold text-dark"><?= htmlspecialchars($order['ten_nguoi_nhan'] ?? $order['ho_ten'] ?? 'Khách hàng') ?></div>
-                                <div class="small text-muted"><i class="bi bi-telephone me-1"></i><?= htmlspecialchars($order['sdt_nhan'] ?? $order['sdt_nguoidung'] ?? '') ?></div>
+                                <div class="fw-bold text-dark"><?= htmlspecialchars($order['ten_khach_hang'] ?? $order['ten_nguoi_nhan'] ?? $order['ho_ten'] ?? 'Khách hàng') ?></div>
+                                <div class="small text-muted"><i class="bi bi-telephone me-1"></i><?= htmlspecialchars($order['sdt_khach_hang'] ?? $order['sdt_nhan'] ?? $order['sdt_nguoidung'] ?? '') ?></div>
                             </td>
                             <td>
-                                <small class="text-muted text-truncate d-inline-block" style="max-width: 220px;" title="<?= htmlspecialchars($order['dia_chi_chi_tiet'] ?? '') ?>">
-                                    <?= htmlspecialchars($order['dia_chi_chi_tiet'] ?? 'Chưa cập nhật') ?>
+                                <small class="text-muted text-truncate d-inline-block" style="max-width: 220px;" title="<?= htmlspecialchars($order['dia_chi_giao_hang'] ?? $order['dia_chi_chi_tiet'] ?? '') ?>">
+                                    <?= htmlspecialchars($order['dia_chi_giao_hang'] ?? $order['dia_chi_chi_tiet'] ?? 'Chưa cập nhật') ?>
                                 </small>
                             </td>
                             <td>

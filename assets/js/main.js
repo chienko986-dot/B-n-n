@@ -236,11 +236,45 @@
         }, 2200);
     }
 
-    renderCart();
-
+    // Them mon vao gio hang (gui len PHP bang fetch)
     document.querySelectorAll('.btn-add').forEach(function (button) {
         button.addEventListener('click', function () {
-            addToCart(button);
+            var idMon = parseInt(button.getAttribute('data-id'), 10);
+
+            if (!idMon || typeof window.fetch !== 'function') {
+                return;
+            }
+
+            button.disabled = true;
+            button.classList.add('is-loading');
+
+            fetch('?action=cart-add', {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                },
+                body: 'id=' + encodeURIComponent(idMon) + '&so_luong=1'
+            })
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (data) {
+                    if (data.success && typeof data.cart_count === 'number') {
+                        if (cartCountEl) {
+                            cartCountEl.textContent = data.cart_count;
+                        }
+                    }
+
+                    showToast(data.message || 'Đã thêm vào giỏ hàng');
+                })
+                .catch(function () {
+                    showToast('Có lỗi xảy ra, vui lòng thử lại');
+                })
+                .then(function () {
+                    button.disabled = false;
+                    button.classList.remove('is-loading');
+                });
         });
     });
 

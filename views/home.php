@@ -12,6 +12,7 @@ $categories = [
 
 $dishes = [
     [
+        'id' => 1,
         'name' => 'Cơm tấm sườn nướng',
         'category' => 'Món Việt',
         'desc' => 'Sườn nướng mật ong, cơm tấm mềm, ăn kèm bì và chả trứng.',
@@ -25,6 +26,7 @@ $dishes = [
         'image' => 'assets/images/dishes/com-tam.jpg',
     ],
     [
+        'id' => 2,
         'name' => 'Phở bò đặc biệt',
         'category' => 'Phở & Bún',
         'desc' => 'Nước dùng hầm xương 12 tiếng, bò tái, bò viên và gầu giòn.',
@@ -38,6 +40,7 @@ $dishes = [
         'image' => 'assets/images/dishes/pho-bo.jpg',
     ],
     [
+        'id' => 3,
         'name' => 'Burger bò phô mai',
         'category' => 'Fastfood',
         'desc' => 'Bò Úc nướng than, phô mai cheddar tan chảy, sốt đặc biệt.',
@@ -51,6 +54,7 @@ $dishes = [
         'image' => 'assets/images/dishes/burger.jpg',
     ],
     [
+        'id' => 4,
         'name' => 'Pizza hải sản',
         'category' => 'Pizza & Pasta',
         'desc' => 'Đế mỏng giòn, tôm, mực, thanh cua và phô mai mozzarella.',
@@ -64,6 +68,7 @@ $dishes = [
         'image' => 'assets/images/dishes/pizza.jpg',
     ],
     [
+        'id' => 5,
         'name' => 'Bún chả Hà Nội',
         'category' => 'Phở & Bún',
         'desc' => 'Chả viên nướng thơm lừng, nước mắm chua ngọt chuẩn vị Hà thành.',
@@ -77,6 +82,7 @@ $dishes = [
         'image' => 'assets/images/dishes/bun-cha.jpg',
     ],
     [
+        'id' => 6,
         'name' => 'Gà rán giòn cay',
         'category' => 'Fastfood',
         'desc' => 'Gà ướp sốt cay Hàn Quốc, lớp vỏ giòn rụm, ăn là mê.',
@@ -90,6 +96,7 @@ $dishes = [
         'image' => 'assets/images/dishes/ga-ran.jpg',
     ],
     [
+        'id' => 7,
         'name' => 'Bánh flan trứng',
         'category' => 'Tráng miệng',
         'desc' => 'Flan mềm mịn, caramel đắng nhẹ, thêm cà phê đá là hết sảy.',
@@ -103,6 +110,7 @@ $dishes = [
         'image' => 'assets/images/dishes/flan.jpg',
     ],
     [
+        'id' => 8,
         'name' => 'Trà đào cam sả',
         'category' => 'Đồ uống',
         'desc' => 'Trà đào thơm, cam tươi và sả, ly lớn 700ml giải nhiệt.',
@@ -323,6 +331,7 @@ $steps = [
         <div class="dish-grid" id="dishGrid">
             <?php foreach ($dishes as $dish): ?>
                 <article class="dish-card reveal"
+                    data-id="<?= (int) $dish['id'] ?>"
                     data-category="<?= htmlspecialchars($dish['category'], ENT_QUOTES, 'UTF-8') ?>"
                     data-price="<?= $dish['price'] ?>"
                     data-old-price="<?= $dish['old_price'] ?>"
@@ -354,9 +363,12 @@ $steps = [
                                 <?php endif; ?>
                             </div>
                             <button class="btn btn-add" type="button"
+                                data-id="<?= (int) $dish['id'] ?>"
                                 data-dish="<?= htmlspecialchars($dish['name'], ENT_QUOTES, 'UTF-8') ?>"
                                 data-price="<?= (int) $dish['price'] ?>"
-                                data-image="<?= htmlspecialchars(BASE_URL . $dish['image'], ENT_QUOTES, 'UTF-8') ?>">
+                                data-image="<?= htmlspecialchars(BASE_URL . $dish['image'], ENT_QUOTES, 'UTF-8') ?>"
+                                title="Thêm vào giỏ hàng"
+                                aria-label="Thêm <?= htmlspecialchars($dish['name'], ENT_QUOTES, 'UTF-8') ?> vào giỏ hàng">
                                 <i class="bi bi-plus-lg"></i>
                             </button>
                         </div>
