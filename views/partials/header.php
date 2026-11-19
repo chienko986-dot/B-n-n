@@ -88,6 +88,11 @@ $currentAction = $_GET['action'] ?? '/';
                             <span class="cart-count"><?= (int) CartModel::count() ?></span>
                         </a>
                         <?php if (!empty($_SESSION['user'])): ?>
+                            <?php if (is_admin()): ?>
+                                <a class="btn btn-warning btn-sm fw-bold px-3 d-flex align-items-center gap-1 rounded-pill shadow-sm" href="<?= BASE_URL ?>?action=admin">
+                                    <i class="bi bi-speedometer2"></i><span>Quản trị (Admin)</span>
+                                </a>
+                            <?php endif; ?>
                             <span class="auth-user" title="<?= htmlspecialchars($_SESSION['user']['ho_ten'], ENT_QUOTES, 'UTF-8') ?>">
                                 <i class="bi bi-person-circle"></i>
                                 <?= htmlspecialchars($_SESSION['user']['ho_ten'], ENT_QUOTES, 'UTF-8') ?>
