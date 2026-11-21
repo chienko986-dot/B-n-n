@@ -13,6 +13,12 @@
 $errors = $errors ?? [];
 $old    = $old ?? [];
 $flash  = get_flash();
+
+// Che do nhap dia chi: 'moi' (chon tinh/huyen/xa) hoac 'cu' (go tay)
+$cheDoDiaChi = ($old['che_do_dia_chi'] ?? 'moi') === 'cu' ? 'cu' : 'moi';
+
+// Du lieu dia chinh dung chung cho ca view va JS (nạp 1 lan)
+$dsDiaChinh = dia_chinh_du_lieu();
 ?>
 
 <section class="section shop-page">
@@ -72,7 +78,8 @@ $flash  = get_flash();
             </script>
         <?php endif; ?>
 
-        <form method="post" action="<?= BASE_URL ?>?action=checkout-post" class="checkout-form" novalidate>
+        <form method="post" action="<?= BASE_URL ?>?action=checkout-post" class="checkout-form" novalidate
+              data-dia-chinh="<?= BASE_URL ?>assets/data/vn-address.json">
 
             <div class="checkout-layout">
 
@@ -123,6 +130,138 @@ $flash  = get_flash();
                         </div>
 
                         <div class="form-group form-group-full">
+                            <label>Địa chỉ giao hàng <span class="required">*</span></label>
+
+                            <div class="addr-mode" role="radiogroup" aria-label="Cách nhập địa chỉ giao hàng">
+                                <label class="addr-mode-option">
+                                    <input type="radio" name="che_do_dia_chi" value="moi"
+                                           <?= $cheDoDiaChi === 'moi' ? 'checked' : '' ?>>
+                                    <span class="addr-mode-body">
+                                        <i class="bi bi-geo-alt-fill"></i>
+                                        <b>Địa chỉ mới</b>
+                                        <small>Chọn Tỉnh / Huyện / Xã</small>
+                                    </span>
+                                </label>
+                                <label class="addr-mode-option">
+                                    <input type="radio" name="che_do_dia_chi" value="cu"
+                                           <?= $cheDoDiaChi === 'cu' ? 'checked' : '' ?>>
+                                    <span class="addr-mode-body">
+                                        <i class="bi bi-pencil-square"></i>
+                                        <b>Địa chỉ cũ</b>
+                                        <small>Gõ tay toàn bộ địa chỉ</small>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- ================= CHE DO MOI: TINH / HUYEN / XA ================= -->
+                        <div class="form-group form-group-full addr-panel" id="addrPanelMoi"
+                             <?= $cheDoDiaChi === 'moi' ? '' : 'hidden' ?>>
+                            <div class="addr-grid">
+                                <div class="form-group">
+                                    <label for="tinh_id">Tỉnh / Thành phố <span class="required">*</span></label>
+                                    <select id="tinh_id"
+                                            name="tinh_id"
+                                            class="form-control addr-select <?= !empty($errors['tinh_id']) ? 'is-invalid' : '' ?>"
+                                            data-cap="tinh">
+                                        <option value="">-- Chọn tỉnh / thành --</option>
+                                        <?php foreach ($dsDiaChinh as $tinh): ?>
+                                            <option value="<?= htmlspecialchars((string) $tinh['level1_id'], ENT_QUOTES, 'UTF-8') ?>"
+                                                <?= (string) ($old['tinh_id'] ?? '') === (string) $tinh['level1_id'] ? 'selected' : '' ?>>
+                                                <?= htmlspecialchars((string) $tinh['name'], ENT_QUOTES, 'UTF-8') ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                    <?= field_error($errors, 'tinh_id') ?>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="huyen_id">Quận / Huyện <span class="required">*</span></label>
+                                    <select id="huyen_id"
+                                            name="huyen_id"
+                                            class="form-control addr-select <?= !empty($errors['huyen_id']) ? 'is-invalid' : '' ?>"
+                                            data-cap="huyen"
+                                            <?= ($old['tinh_id'] ?? '') === '' ? 'disabled' : '' ?>>
+                                        <option value="">-- Chọn quận / huyện --</option>
+                                        <?php
+                                        $dsHuyen = [];
+                                        if (($old['tinh_id'] ?? '') !== '') {
+                                            foreach ($dsDiaChinh as $tinh) {
+                                                if ((string) $tinh['level1_id'] === (string) $old['tinh_id']) {
+                                                    $dsHuyen = $tinh['level2s'] ?? [];
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        foreach ($dsHuyen as $huyen): ?>
+                                            <option value="<?= htmlspecialchars((string) $huyen['level2_id'], ENT_QUOTES, 'UTF-8') ?>"
+                                                <?= (string) ($old['huyen_id'] ?? '') === (string) $huyen['level2_id'] ? 'selected' : '' ?>>
+                                                <?= htmlspecialchars((string) $huyen['name'], ENT_QUOTES, 'UTF-8') ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                    <?= field_error($errors, 'huyen_id') ?>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="xa_id">Phường / Xã <span class="required">*</span></label>
+                                    <select id="xa_id"
+                                            name="xa_id"
+                                            class="form-control addr-select <?= !empty($errors['xa_id']) ? 'is-invalid' : '' ?>"
+                                            data-cap="xa"
+                                            <?= ($old['huyen_id'] ?? '') === '' ? 'disabled' : '' ?>>
+                                        <option value="">-- Chọn phường / xã --</option>
+                                        <?php
+                                        $dsXa = [];
+                                        if (($old['tinh_id'] ?? '') !== '' && ($old['huyen_id'] ?? '') !== '') {
+                                            foreach ($dsDiaChinh as $tinh) {
+                                                if ((string) $tinh['level1_id'] !== (string) $old['tinh_id']) {
+                                                    continue;
+                                                }
+                                                foreach (($tinh['level2s'] ?? []) as $huyen) {
+                                                    if ((string) $huyen['level2_id'] === (string) $old['huyen_id']) {
+                                                        $dsXa = $huyen['level3s'] ?? [];
+                                                        break 2;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        foreach ($dsXa as $xa): ?>
+                                            <option value="<?= htmlspecialchars((string) $xa['level3_id'], ENT_QUOTES, 'UTF-8') ?>"
+                                                <?= (string) ($old['xa_id'] ?? '') === (string) $xa['level3_id'] ? 'selected' : '' ?>>
+                                                <?= htmlspecialchars((string) $xa['name'], ENT_QUOTES, 'UTF-8') ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                    <?= field_error($errors, 'xa_id') ?>
+                                </div>
+
+                                <div class="form-group addr-grid-full">
+                                    <label for="so_nha">Số nhà, đường <span class="required">*</span></label>
+                                    <input type="text"
+                                           id="so_nha"
+                                           name="so_nha"
+                                           class="form-control <?= !empty($errors['so_nha']) ? 'is-invalid' : '' ?>"
+                                           placeholder="Ví dụ: 123 Nguyễn Văn Linh"
+                                           maxlength="255"
+                                           value="<?= old_value($old, 'so_nha') ?>"
+                                           autocomplete="street-address">
+                                    <?= field_error($errors, 'so_nha') ?>
+                                </div>
+
+                                <div class="form-group addr-grid-full">
+                                    <span class="addr-preview-label">Địa chỉ đầy đủ</span>
+                                    <p class="addr-preview" id="addrPreview" aria-live="polite">
+                                        <i class="bi bi-geo-alt"></i>
+                                        <span>Chọn tỉnh / thành, quận / huyện, phường / xã để xem địa chỉ.</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ================= CHE DO CU: GO TAY ================= -->
+                        <div class="form-group form-group-full addr-panel" id="addrPanelCu"
+                             <?= $cheDoDiaChi === 'cu' ? '' : 'hidden' ?>>
                             <label for="dia_chi">Địa chỉ giao hàng <span class="required">*</span></label>
                             <textarea id="dia_chi"
                                       name="dia_chi"

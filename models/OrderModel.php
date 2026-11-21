@@ -26,7 +26,8 @@ class OrderModel extends BaseModel
     /**
      * Tao don hang moi.
      *
-     * @param array $khachHang ['ho_ten','so_dien_thoai','email','dia_chi','ghi_chu']
+     * @param array $khachHang ['ho_ten','so_dien_thoai','email','dia_chi','ghi_chu',
+     *                         'tinh_id','huyen_id','xa_id','so_nha']
      * @param array $chiTiet   [['id' => id_mon, 'so_luong' => 2], ...]
      * @param int   $phiGiaoHang
      * @param string $phuongThuc 'tien_mat' | 'chuyen_khoan'
@@ -100,23 +101,39 @@ class OrderModel extends BaseModel
 
             // ---- Buoc 3: luu thong tin don hang ----
             if ($hasMaDon) {
+                // Cot dia chinh (tinh/huyen/xa/so_nha) chi co sau khi chay database_dia_chinh.sql
+                $cotDiaChinh = $this->hasColumn('donhang', 'tinh_id');
+                $themDiaChinh = $cotDiaChinh
+                    ? ', tinh_id, huyen_id, xa_id, so_nha'
+                    : '';
+                $giaTriDiaChinh = $cotDiaChinh
+                    ? [
+                        $khachHang['tinh_id']  ?? null,
+                        $khachHang['huyen_id'] ?? null,
+                        $khachHang['xa_id']    ?? null,
+                        $khachHang['so_nha']   ?? null,
+                    ]
+                    : [];
+
                 $sql = "INSERT INTO donhang
-                            (ma_don, ho_ten, so_dien_thoai, email, dia_chi_giao,
+                            (ma_don, ho_ten, so_dien_thoai, email, dia_chi_giao{$themDiaChinh},
                              nguoidung_id, diachi_id, ngay_dat,
                              tong_tien, phi_giao_hang, trang_thai, ghi_chu)
-                        VALUES (?, ?, ?, ?, ?, NULL, NULL, NOW(), ?, ?, 'cho_xac_nhan', ?)";
+                        VALUES (?, ?, ?, ?, ?" . str_repeat(', ?', count($giaTriDiaChinh)) . ",
+                                NULL, NULL, NOW(), ?, ?, 'cho_xac_nhan', ?)";
 
                 $stmt = $this->pdo->prepare($sql);
-                $stmt->execute([
+                $stmt->execute(array_merge([
                     $maDon,
                     $khachHang['ho_ten'],
                     $khachHang['so_dien_thoai'],
                     $khachHang['email'],
                     $khachHang['dia_chi'],
+                ], $giaTriDiaChinh, [
                     $tongTienHang,
                     (float) $phiGiaoHang,
                     $khachHang['ghi_chu'] ?? null,
-                ]);
+                ]));
             } else {
                 $sql = "INSERT INTO donhang
                             (nguoidung_id, diachi_id, ngay_dat,

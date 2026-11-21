@@ -198,6 +198,96 @@ if (!function_exists('old_value')) {
     }
 }
 
+if (!function_exists('dia_chinh_du_lieu')) {
+    /**
+     * Doc du lieu 63 tinh / huyen / xa (file JSON tai 1 lan, giua cac lan goi).
+     * @return array
+     */
+    function dia_chinh_du_lieu()
+    {
+        static $duLieu = null;
+
+        if ($duLieu === null) {
+            $file = PATH_ROOT . 'assets/data/vn-address.json';
+
+            $duLieu = is_readable($file)
+                ? (json_decode((string) file_get_contents($file), true) ?: [])
+                : [];
+        }
+
+        return $duLieu;
+    }
+}
+
+if (!function_exists('dia_chinh_ten')) {
+    /**
+     * Tra ve ten tinh / huyen / xa tu id.
+     *
+     * @param string $tinhId
+     * @param string $huyenId
+     * @param string $xaId
+     * @return array ['tinh' => '', 'huyen' => '', 'xa' => '']
+     */
+    function dia_chinh_ten($tinhId, $huyenId, $xaId)
+    {
+        $ketQua = ['tinh' => '', 'huyen' => '', 'xa' => ''];
+
+        foreach (dia_chinh_du_lieu() as $tinh) {
+            if ((string) ($tinh['level1_id'] ?? '') !== (string) $tinhId) {
+                continue;
+            }
+
+            $ketQua['tinh'] = (string) ($tinh['name'] ?? '');
+
+            foreach (($tinh['level2s'] ?? []) as $huyen) {
+                if ((string) ($huyen['level2_id'] ?? '') !== (string) $huyenId) {
+                    continue;
+                }
+
+                $ketQua['huyen'] = (string) ($huyen['name'] ?? '');
+
+                foreach (($huyen['level3s'] ?? []) as $xa) {
+                    if ((string) ($xa['level3_id'] ?? '') === (string) $xaId) {
+                        $ketQua['xa'] = (string) ($xa['name'] ?? '');
+                        break 2;
+                    }
+                }
+
+                break;
+            }
+
+            break;
+        }
+
+        return $ketQua;
+    }
+}
+
+if (!function_exists('dia_chinh_ghep')) {
+    /**
+     * Noi thanh 1 chuoi dia chi day du de luu vao donhang.dia_chi_giao.
+     *
+     * @param string $soNha
+     * @param string $tenXa
+     * @param string $tenHuyen
+     * @param string $tenTinh
+     * @return string
+     */
+    function dia_chinh_ghep($soNha, $tenXa, $tenHuyen, $tenTinh)
+    {
+        $phan = array_filter([
+            trim((string) $soNha),
+            trim((string) $tenXa),
+            trim((string) $tenHuyen),
+            trim((string) $tenTinh),
+        ], function ($v) {
+            return $v !== '';
+        });
+
+        return implode(', ', $phan);
+    }
+}
+
 if (!function_exists('upload_file')) {
     function upload_file($folder, $file)
     {

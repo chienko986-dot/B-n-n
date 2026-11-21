@@ -68,8 +68,12 @@ class CheckoutController
                     'ho_ten'        => $old['ho_ten'],
                     'so_dien_thoai' => $old['so_dien_thoai'],
                     'email'         => $old['email'],
-                    'dia_chi'       => $old['dia_chi'],
+                    'dia_chi'       => $this->ghepDiaChi($old),
                     'ghi_chu'       => $old['ghi_chu'],
+                    'tinh_id'       => $old['tinh_id'] ?: null,
+                    'huyen_id'      => $old['huyen_id'] ?: null,
+                    'xa_id'         => $old['xa_id'] ?: null,
+                    'so_nha'        => $old['so_nha'] ?: null,
                 ],
                 array_map(function ($item) {
                     return ['id' => $item['id'], 'so_luong' => $item['so_luong']];
@@ -126,12 +130,35 @@ class CheckoutController
      */
     private function layDuLieuForm()
     {
+        $cheDo = (string) ($_POST['che_do_dia_chi'] ?? 'moi');
+
+        // Che do CU: khong luu id dia chinh (khach go tay toan bo)
+        if ($cheDo === 'cu') {
+            return [
+                'ho_ten'         => trim((string) ($_POST['ho_ten'] ?? '')),
+                'so_dien_thoai'  => trim((string) ($_POST['so_dien_thoai'] ?? '')),
+                'email'          => trim((string) ($_POST['email'] ?? '')),
+                'che_do_dia_chi' => 'cu',
+                'dia_chi'        => trim((string) ($_POST['dia_chi'] ?? '')),
+                'tinh_id'        => '',
+                'huyen_id'       => '',
+                'xa_id'          => '',
+                'so_nha'         => '',
+                'ghi_chu'        => trim((string) ($_POST['ghi_chu'] ?? '')),
+            ];
+        }
+
         return [
-            'ho_ten'        => trim((string) ($_POST['ho_ten'] ?? '')),
-            'so_dien_thoai' => trim((string) ($_POST['so_dien_thoai'] ?? '')),
-            'email'         => trim((string) ($_POST['email'] ?? '')),
-            'dia_chi'       => trim((string) ($_POST['dia_chi'] ?? '')),
-            'ghi_chu'       => trim((string) ($_POST['ghi_chu'] ?? '')),
+            'ho_ten'         => trim((string) ($_POST['ho_ten'] ?? '')),
+            'so_dien_thoai'  => trim((string) ($_POST['so_dien_thoai'] ?? '')),
+            'email'          => trim((string) ($_POST['email'] ?? '')),
+            'che_do_dia_chi' => 'moi',
+            'dia_chi'        => trim((string) ($_POST['dia_chi'] ?? '')),
+            'tinh_id'        => trim((string) ($_POST['tinh_id'] ?? '')),
+            'huyen_id'       => trim((string) ($_POST['huyen_id'] ?? '')),
+            'xa_id'          => trim((string) ($_POST['xa_id'] ?? '')),
+            'so_nha'         => trim((string) ($_POST['so_nha'] ?? '')),
+            'ghi_chu'        => trim((string) ($_POST['ghi_chu'] ?? '')),
         ];
     }
 
@@ -167,13 +194,54 @@ class CheckoutController
             $errors['email'] = 'Email không đúng định dạng (ví dụ: ban@gmail.com).';
         }
 
-        // Dia chi giao hang
-        if ($data['dia_chi'] === '') {
-            $errors['dia_chi'] = 'Vui lòng nhập địa chỉ giao hàng.';
-        } elseif (mb_strlen($data['dia_chi']) < 10) {
-            $errors['dia_chi'] = 'Địa chỉ giao hàng cần ít nhất 10 ký tự.';
-        } elseif (mb_strlen($data['dia_chi']) > 500) {
-            $errors['dia_chi'] = 'Địa chỉ giao hàng không được quá 500 ký tự.';
+        // Dia chi giao hang (chon 1 trong 2 che do)
+        if ($data['che_do_dia_chi'] === 'cu') {
+            // Che do CU: khach go tay toan bo dia chi
+            if ($data['dia_chi'] === '') {
+                $errors['dia_chi'] = 'Vui lòng nhập địa chỉ giao hàng.';
+            } elseif (mb_strlen($data['dia_chi']) < 10) {
+                $errors['dia_chi'] = 'Địa chỉ giao hàng cần ít nhất 10 ký tự.';
+            } elseif (mb_strlen($data['dia_chi']) > 500) {
+                $errors['dia_chi'] = 'Địa chỉ giao hàng không được quá 500 ký tự.';
+            }
+        } else {
+            // Che do MOI: chon Tinh / Huyen / Xa + nhap so nha, duong
+            if ($data['tinh_id'] === '') {
+                $errors['tinh_id'] = 'Vui lòng chọn Tỉnh / Thành phố.';
+            }
+
+            if ($data['huyen_id'] === '') {
+                $errors['huyen_id'] = 'Vui lòng chọn Quận / Huyện.';
+            }
+
+            if ($data['xa_id'] === '') {
+                $errors['xa_id'] = 'Vui lòng chọn Phường / Xã.';
+            }
+
+            if ($data['so_nha'] === '') {
+                $errors['so_nha'] = 'Vui lòng nhập số nhà, đường.';
+            } elseif (mb_strlen($data['so_nha']) > 255) {
+                $errors['so_nha'] = 'Số nhà, đường không được quá 255 ký tự.';
+            }
+
+            // Id co ton tai trong du lieu dia chinh khong?
+            if (empty($errors)) {
+                $ten = dia_chinh_ten($data['tinh_id'], $data['huyen_id'], $data['xa_id']);
+
+                if ($ten['tinh'] === '' || $ten['huyen'] === '' || $ten['xa'] === '') {
+                    $errors['xa_id'] = 'Phường / Xã vừa chọn không hợp lệ, vui lòng chọn lại.';
+                }
+            }
+
+            // Dia chi day du phai du 10 ky tu (giu quy tac cu)
+            if (empty($errors)) {
+                $ten        = dia_chinh_ten($data['tinh_id'], $data['huyen_id'], $data['xa_id']);
+                $diaChiDayDu = dia_chinh_ghep($data['so_nha'], $ten['xa'], $ten['huyen'], $ten['tinh']);
+
+                if (mb_strlen($diaChiDayDu) < 10) {
+                    $errors['so_nha'] = 'Địa chỉ giao hàng cần ít nhất 10 ký tự.';
+                }
+            }
         }
 
         // Ghi chu: khong bat buoc
@@ -182,5 +250,23 @@ class CheckoutController
         }
 
         return $errors;
+    }
+
+    /**
+     * Ghep dia chi day du (che do MOI) de luu vao donhang.dia_chi_giao.
+     * Che do CU giu nguyen chuoi khach da go.
+     *
+     * @param array $data
+     * @return string
+     */
+    private function ghepDiaChi(array $data)
+    {
+        if ($data['che_do_dia_chi'] === 'cu') {
+            return $data['dia_chi'];
+        }
+
+        $ten = dia_chinh_ten($data['tinh_id'], $data['huyen_id'], $data['xa_id']);
+
+        return dia_chinh_ghep($data['so_nha'], $ten['xa'], $ten['huyen'], $ten['tinh']);
     }
 }
