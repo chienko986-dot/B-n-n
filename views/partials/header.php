@@ -89,10 +89,13 @@ $currentAction = $_GET['action'] ?? '/';
                                     <i class="bi bi-speedometer2"></i><span>Quản trị (Admin)</span>
                                 </a>
                             <?php endif; ?>
-                            <span class="auth-user" title="<?= htmlspecialchars($_SESSION['user']['ho_ten'], ENT_QUOTES, 'UTF-8') ?>">
+                            <a class="auth-user" href="<?= BASE_URL ?>?action=account" title="Tài khoản của tôi">
                                 <i class="bi bi-person-circle"></i>
                                 <?= htmlspecialchars($_SESSION['user']['ho_ten'], ENT_QUOTES, 'UTF-8') ?>
-                            </span>
+                            </a>
+                            <a class="btn btn-login btn-sm d-flex align-items-center gap-1" href="<?= BASE_URL ?>?action=orders" title="Đơn hàng của tôi">
+                                <i class="bi bi-receipt"></i><span>Đơn hàng</span>
+                            </a>
                             <form class="logout-form" method="post" action="<?= BASE_URL ?>?action=logout">
                                 <input type="hidden" name="_csrf_token" value="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>">
                                 <button class="btn btn-login" type="submit">

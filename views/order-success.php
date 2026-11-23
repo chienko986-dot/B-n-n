@@ -158,7 +158,10 @@ $status = $trangThai[$don['trang_thai']] ?? $trangThai['cho_xac_nhan'];
 
         <!-- ================= CAC NUT HANH DONG ================= -->
         <div class="success-actions">
-            <a href="<?= BASE_URL ?>" class="btn btn-brand btn-lg">
+            <a href="<?= BASE_URL ?>?action=orders" class="btn btn-brand btn-lg">
+                <i class="bi bi-receipt"></i> Xem đơn hàng của tôi
+            </a>
+            <a href="<?= BASE_URL ?>" class="btn btn-ghost btn-lg">
                 <i class="bi bi-house-door"></i> Về trang chủ
             </a>
             <a href="<?= BASE_URL ?>#thuc-don" class="btn btn-ghost btn-lg">

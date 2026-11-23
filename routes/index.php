@@ -17,6 +17,13 @@ match ($action) {
     'login'                 => (new AuthController)->login(),
     'logout'                => (new AuthController)->logout(),
 
+    // ---------- TÀI KHOẢN KHÁCH HÀNG ----------
+    'account'               => (new AccountController)->index(),
+    'account-update'        => $isPost ? (new AccountController)->updateProfile()   : redirect_to(BASE_URL . '?action=account'),
+    'account-password'      => $isPost ? (new AccountController)->changePassword()  : redirect_to(BASE_URL . '?action=account'),
+    'orders'                => (new AccountController)->orders(),
+    'order-detail'          => (new AccountController)->orderDetail(),
+
     // ---------- GIỎ HÀNG (PHP Session) ----------
     'cart'                  => (new CartController)->index(),
     'cart-add'              => $isPost ? (new CartController)->add()    : redirect_to(BASE_URL . '?action=cart'),
@@ -32,6 +39,7 @@ match ($action) {
     // ---------- SO DIA CHI (chon nhanh khi dat hang) ----------
     'address-save'           => $isPost ? (new AddressController)->save()   : redirect_to(BASE_URL . '?action=checkout'),
     'address-delete'         => $isPost ? (new AddressController)->delete() : redirect_to(BASE_URL . '?action=checkout'),
+    'address-set-default'    => $isPost ? (new AddressController)->setDefault() : redirect_to(BASE_URL . '?action=account'),
 
     // ---------- QUẢN TRỊ VIÊN (ADMIN) ----------
     'admin'                 => (new AdminController)->dashboard(),
@@ -65,5 +73,6 @@ match ($action) {
     // Nạp dữ liệu mẫu
     'admin/seed'           => (new AdminController)->seedData(),
 
-    default                => (new HomeController)->index(),
+    // Trang khong ton tai (404)
+    default                => (new HomeController)->notFound(),
 };

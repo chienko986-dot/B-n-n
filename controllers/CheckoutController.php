@@ -15,12 +15,20 @@ class CheckoutController
      */
     public function index()
     {
+        // Bat buoc dang nhap de dat hang (don hang gan voi tai khoan, xem lich su duoc)
+        if (empty($_SESSION['user']['id'])) {
+            set_flash('error', 'Vui lòng đăng nhập để đặt hàng.');
+            redirect_to(BASE_URL . '?action=login&redirect=checkout');
+            return;
+        }
+
         $cart = cart_details();
 
         // Gio hang rong thi khong cho vao trang dat hang
         if ($cart['so_mon'] === 0) {
             set_flash('error', 'Giỏ hàng đang trống, vui lòng chọn món trước.');
             redirect_to(BASE_URL . '?action=cart');
+            return;
         }
 
         $title  = 'Đặt hàng - AnLaMe';
@@ -41,11 +49,19 @@ class CheckoutController
      */
     public function placeOrder()
     {
+        // Bat buoc dang nhap (khong cho dat hang voi phien khach)
+        if (empty($_SESSION['user']['id'])) {
+            set_flash('error', 'Vui lòng đăng nhập để đặt hàng.');
+            redirect_to(BASE_URL . '?action=login&redirect=checkout');
+            return;
+        }
+
         $cart = cart_details();
 
         if ($cart['so_mon'] === 0) {
             set_flash('error', 'Giỏ hàng đang trống, vui lòng chọn món trước.');
             redirect_to(BASE_URL . '?action=cart');
+            return;
         }
 
         // 1. Kiem tra CSRF + thong tin khach hang

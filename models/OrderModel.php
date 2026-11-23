@@ -307,6 +307,31 @@ class OrderModel extends BaseModel
     // 2. DÀNH CHO QUẢN TRỊ VIÊN (ADMIN)
     // ========================================================
 
+    /**
+     * Lay danh sach don hang cua 1 khach hang (lich su dat hang).
+     * @param int $userId
+     * @return array
+     */
+    public function getByUser($userId)
+    {
+        $hasMaDon = $this->hasColumn('donhang', 'ma_don');
+        $selectMaDon = $hasMaDon ? 'dh.ma_don,' : "CONCAT('DH', dh.id) AS ma_don,";
+
+        $sql = "SELECT dh.id, $selectMaDon dh.ngay_dat, dh.tong_tien, dh.phi_giao_hang,
+                       dh.trang_thai, dh.ghi_chu, dh.ho_ten, dh.so_dien_thoai, dh.dia_chi_giao,
+                       tt.phuong_thuc, tt.trang_thai AS trang_thai_tt,
+                       (SELECT COUNT(*) FROM chitiet_donhang c WHERE c.donhang_id = dh.id) AS so_mon,
+                       (SELECT COALESCE(SUM(c.so_luong), 0) FROM chitiet_donhang c WHERE c.donhang_id = dh.id) AS so_luong_tong
+                FROM DONHANG dh
+                LEFT JOIN THANHTOAN tt ON dh.id = tt.donhang_id
+                WHERE dh.nguoidung_id = ?
+                ORDER BY dh.ngay_dat DESC";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([(int) $userId]);
+        return $stmt->fetchAll();
+    }
+
     public function getAll($filters = [])
     {
         $hasGuestCols = $this->hasColumn('donhang', 'ho_ten');

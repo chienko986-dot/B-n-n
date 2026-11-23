@@ -64,6 +64,7 @@ class AddressController
 
     /**
      * Xoa dia chi: POST ?action=address-delete
+     * - back=account -> ve trang tai khoan, nguoc lai ve trang dat hang
      */
     public function delete()
     {
@@ -73,7 +74,7 @@ class AddressController
 
         if (!is_valid_csrf_token($_POST['_csrf_token'] ?? null)) {
             set_flash('error', 'Phiên làm việc đã hết hạn. Vui lòng tải lại trang và thử lại.');
-            redirect_to(BASE_URL . '?action=checkout');
+            redirect_to($this->trangSauThaoTac());
             return;
         }
 
@@ -86,7 +87,7 @@ class AddressController
                 'error',
                 'Không xóa được địa chỉ. Địa chỉ có thể đã được dùng trong đơn hàng hoặc không thuộc về bạn.'
             );
-            redirect_to(BASE_URL . '?action=checkout');
+            redirect_to($this->trangSauThaoTac());
             return;
         }
 
@@ -96,7 +97,49 @@ class AddressController
         }
 
         set_flash('success', 'Đã xóa địa chỉ.');
-        redirect_to(BASE_URL . '?action=checkout');
+        redirect_to($this->trangSauThaoTac());
+    }
+
+    /**
+     * Dat dia chi thanh mac dinh: POST ?action=address-set-default
+     */
+    public function setDefault()
+    {
+        if (!$this->nguoiDungDaDangNhap()) {
+            return;
+        }
+
+        if (!is_valid_csrf_token($_POST['_csrf_token'] ?? null)) {
+            set_flash('error', 'Phiên làm việc đã hết hạn. Vui lòng tải lại trang và thử lại.');
+            redirect_to($this->trangSauThaoTac());
+            return;
+        }
+
+        $id     = (int) ($_POST['id'] ?? 0);
+        $userId = (int) $_SESSION['user']['id'];
+
+        if ($id <= 0 || !(new AddressModel())->setDefault($id, $userId)) {
+            set_flash('error', 'Không đặt được địa chỉ mặc định.');
+        } else {
+            $_SESSION['chon_diachi_id'] = $id;
+            set_flash('success', 'Đã đặt địa chỉ mặc định.');
+        }
+
+        redirect_to($this->trangSauThaoTac());
+    }
+
+    /**
+     * URL tro ve sau khi them / sua / xoa dia chi.
+     * - back=account -> trang tai khoan
+     * - nguoc lai    -> trang dat hang
+     * @return string
+     */
+    private function trangSauThaoTac()
+    {
+        $back = (string) ($_POST['back'] ?? $_GET['back'] ?? '');
+        return $back === 'account'
+            ? BASE_URL . '?action=account'
+            : BASE_URL . '?action=checkout';
     }
 
     /**

@@ -9,4 +9,13 @@ class HomeController
 
         require_once PATH_VIEW_MAIN;
     }
+
+    public function notFound()
+    {
+        http_response_code(404);
+        $title = 'Không tìm thấy trang - AnLaMe';
+        $view  = 'not-found';
+
+        require_once PATH_VIEW_MAIN;
+    }
 }

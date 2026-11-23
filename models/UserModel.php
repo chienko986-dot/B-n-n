@@ -58,6 +58,20 @@ class UserModel extends BaseModel
         return (int) $this->pdo->query('SELECT COUNT(*) FROM NGUOIDUNG')->fetchColumn();
     }
 
+    public function updateProfile($id, $name, $phone = null, $address = null)
+    {
+        $query = $this->pdo->prepare(
+            'UPDATE NGUOIDUNG SET ho_ten = ?, so_dien_thoai = ?, dia_chi = ? WHERE id = ?'
+        );
+        return $query->execute([$name, $phone, $address, (int) $id]);
+    }
+
+    public function updatePassword($id, $newPassword)
+    {
+        $query = $this->pdo->prepare('UPDATE NGUOIDUNG SET mat_khau = ? WHERE id = ?');
+        return $query->execute([password_hash($newPassword, PASSWORD_DEFAULT), (int) $id]);
+    }
+
     public function updateRole($id, $role)
     {
         if (!in_array($role, ['khach', 'admin'], true)) {

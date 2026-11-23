@@ -1475,3 +1475,148 @@ body.addr-modal-open {
         gap: .3rem;
     }
 }
+
+
+/* =====================================================================
+   TAI KHOAN - LICH SU DON HANG - CHI TIET DON (KHACH HANG)
+   ===================================================================== */
+a.chip {
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: .25rem;
+    cursor: pointer;
+}
+
+.account-panel[hidden] {
+    display: none !important;
+}
+
+.order-history {
+    display: grid;
+    gap: 1rem;
+}
+
+.order-card {
+    background: #fff;
+    border: 1.5px solid var(--line);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.order-card:hover {
+    border-color: #ffd0c4;
+    box-shadow: 0 10px 24px -18px rgba(0, 0, 0, .25);
+}
+
+.order-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75rem;
+    flex-wrap: wrap;
+    padding: .9rem 1.1rem;
+    background: #fffaf7;
+    border-bottom: 1px dashed var(--line);
+}
+
+.order-code {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    color: var(--ink);
+    font-weight: 800;
+    font-size: .95rem;
+}
+
+.order-code i {
+    color: var(--brand);
+}
+
+.order-date {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    margin-left: .75rem;
+    color: var(--muted);
+    font-size: .82rem;
+    font-weight: 600;
+}
+
+.order-card-body {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding: .9rem 1.1rem;
+}
+
+.order-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .9rem;
+    color: var(--ink-soft);
+    font-size: .88rem;
+    font-weight: 600;
+}
+
+.order-meta i {
+    color: var(--brand);
+    margin-right: .25rem;
+}
+
+.order-total {
+    text-align: right;
+}
+
+.order-total span {
+    display: block;
+    font-size: .78rem;
+    color: var(--muted);
+    font-weight: 600;
+}
+
+.order-total strong {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--brand-700);
+}
+
+.order-card-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75rem;
+    flex-wrap: wrap;
+    padding: .75rem 1.1rem;
+    border-top: 1px solid var(--line);
+    background: #fff;
+}
+
+.order-done-note {
+    color: var(--mint-deep, #0f8a5f);
+    font-size: .84rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+}
+
+@media (max-width: 640px) {
+    .order-card-body {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .order-total {
+        text-align: left;
+    }
+
+    .order-date {
+        display: block;
+        margin-left: 0;
+        margin-top: .25rem;
+    }
+}
