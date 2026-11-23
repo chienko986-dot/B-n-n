@@ -236,17 +236,254 @@
         }, 2200);
     }
 
+    // ---- Trang chi tiet: doc lua chon size / topping / ghi chu ----
+    function layLuaChonTuyChinh(coTuyChinh) {
+        var params = new URLSearchParams();
+
+        if (!coTuyChinh) {
+            return params;
+        }
+
+        var box = document.getElementById('dishBuyBox');
+        if (!box) {
+            return params;
+        }
+
+        var size = box.querySelector('input[name="size_id"]:checked');
+        if (size) {
+            params.set('size_id', size.value);
+        }
+
+        box.querySelectorAll('input[name="topping_ids[]"]:checked').forEach(function (top) {
+            params.append('topping_ids[]', top.value);
+        });
+
+        var note = document.getElementById('dishNote');
+        if (note && note.value.trim()) {
+            params.set('ghi_chu', note.value.trim());
+        }
+
+        return params;
+    }
+
     // Them mon vao gio hang (gui len PHP bang fetch)
+    function guiThemVaoGio(button, soLuong) {
+        var idMon = parseInt(button.getAttribute('data-id'), 10);
+
+        if (!idMon || typeof window.fetch !== 'function') {
+            return;
+        }
+
+        var qty = Math.max(1, parseInt(soLuong, 10) || 1);
+
+        // Chi trang chi tiet (data-use-opts) gui them lua chon size / topping / ghi chu
+        var params = layLuaChonTuyChinh(button.getAttribute('data-use-opts') === '1');
+        params.set('id', idMon);
+        params.set('so_luong', qty);
+
+        button.disabled = true;
+        button.classList.add('is-loading');
+
+        fetch('?action=cart-add', {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+            },
+            body: params.toString()
+        })
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                if (data.success && typeof data.cart_count === 'number') {
+                    if (cartCountEl) {
+                        cartCountEl.textContent = data.cart_count;
+                    }
+                }
+
+                showToast(data.message || 'Đã thêm vào giỏ hàng');
+            })
+            .catch(function () {
+                showToast('Có lỗi xảy ra, vui lòng thử lại');
+            })
+            .then(function () {
+                button.disabled = false;
+                button.classList.remove('is-loading');
+            });
+    }
+
     document.querySelectorAll('.btn-add').forEach(function (button) {
         button.addEventListener('click', function () {
-            var idMon = parseInt(button.getAttribute('data-id'), 10);
+            var soLuong = 1;
 
-            if (!idMon || typeof window.fetch !== 'function') {
+            if (button.getAttribute('data-use-qty') === '1') {
+                var qtyInput = document.getElementById('detailQty');
+                soLuong = qtyInput ? parseInt(qtyInput.value, 10) : 1;
+            }
+
+            guiThemVaoGio(button, soLuong);
+        });
+    });
+
+    // ---- Trang chi tiet mon an: chon so luong ----
+    var detailQty = document.getElementById('detailQty');
+    var qtyMinus = document.getElementById('qtyMinus');
+    var qtyPlus = document.getElementById('qtyPlus');
+    var qtyActions = document.querySelector('.dish-detail-actions');
+    var qtyMax = qtyActions ? parseInt(qtyActions.getAttribute('data-max'), 10) || 99 : 99;
+
+    // ---- Trang chi tiet: tinh tien theo size / topping / so luong ----
+    function capNhatTien() {
+        var box = document.getElementById('dishBuyBox');
+        var unitEl = document.getElementById('dishUnitPrice');
+        var totalEl = document.getElementById('dishTotalPrice');
+        var qtyHintEl = document.getElementById('dishTotalQty');
+
+        if (!box || !unitEl || !totalEl) {
+            return;
+        }
+
+        var gia = parseInt(box.getAttribute('data-base'), 10) || 0;
+
+        var size = box.querySelector('input[name="size_id"]:checked');
+        if (size) {
+            gia += parseInt(size.getAttribute('data-gia-tang'), 10) || 0;
+        }
+
+        box.querySelectorAll('input[name="topping_ids[]"]:checked').forEach(function (top) {
+            gia += parseInt(top.getAttribute('data-gia'), 10) || 0;
+        });
+
+        var qty = detailQty ? (parseInt(detailQty.value, 10) || 1) : 1;
+
+        unitEl.textContent = formatPrice(gia);
+        totalEl.textContent = formatPrice(gia * qty);
+
+        if (qtyHintEl) {
+            qtyHintEl.textContent = '× ' + qty + ' phần';
+        }
+    }
+
+    function capNhatSoLuong(value) {
+        if (!detailQty) {
+            return;
+        }
+
+        var qty = parseInt(value, 10);
+        if (!Number.isFinite(qty)) {
+            qty = 1;
+        }
+        qty = Math.min(Math.max(qty, 1), qtyMax);
+        detailQty.value = qty;
+
+        if (qtyMinus) {
+            qtyMinus.disabled = qty <= 1;
+        }
+        if (qtyPlus) {
+            qtyPlus.disabled = qty >= qtyMax;
+        }
+
+        capNhatTien();
+    }
+
+    if (detailQty) {
+        capNhatSoLuong(detailQty.value);
+
+        detailQty.addEventListener('change', function () {
+            capNhatSoLuong(detailQty.value);
+        });
+        detailQty.addEventListener('input', function () {
+            if (detailQty.value !== '') {
+                capNhatSoLuong(detailQty.value);
+            }
+        });
+    }
+
+    if (qtyMinus) {
+        qtyMinus.addEventListener('click', function () {
+            capNhatSoLuong((parseInt(detailQty.value, 10) || 1) - 1);
+        });
+    }
+
+    if (qtyPlus) {
+        qtyPlus.addEventListener('click', function () {
+            capNhatSoLuong((parseInt(detailQty.value, 10) || 1) + 1);
+        });
+    }
+
+    // Chon size / topping -> tinh lai tien ngay tren trang
+    var dishBuyBox = document.getElementById('dishBuyBox');
+    if (dishBuyBox) {
+        dishBuyBox.addEventListener('change', function (event) {
+            if (event.target && event.target.matches('input[name="size_id"], input[name="topping_ids[]"]')) {
+                capNhatTien();
+            }
+        });
+
+        capNhatTien();
+    }
+
+    // ---- Trang chi tiet: chuyen anh phu -> anh lon ----
+    document.querySelectorAll('.dish-thumb-item').forEach(function (thumb) {
+        thumb.addEventListener('click', function () {
+            var full = thumb.getAttribute('data-full');
+            var mainImg = document.getElementById('dishMainImg');
+
+            if (!full || !mainImg) {
                 return;
             }
 
-            button.disabled = true;
-            button.classList.add('is-loading');
+            mainImg.src = full;
+            mainImg.style.display = '';
+
+            document.querySelectorAll('.dish-thumb-item').forEach(function (item) {
+                item.classList.remove('is-active');
+            });
+            thumb.classList.add('is-active');
+        });
+    });
+
+    // ---- Trang chi tiet: to mau sao danh gia ----
+    var starInput = document.getElementById('dishStarInput');
+    if (starInput) {
+        var starHints = ['', 'Rất tệ', 'Tệ', 'Bình thường', 'Tốt', 'Rất tuyệt vời'];
+
+        var toMauSao = function () {
+            var checked = starInput.querySelector('input[name="so_sao"]:checked');
+            var soSao = checked ? parseInt(checked.value, 10) : 0;
+
+            starInput.querySelectorAll('label').forEach(function (label, index) {
+                label.classList.toggle('is-on', index + 1 <= soSao);
+            });
+
+            var hint = document.getElementById('dishStarHint');
+            if (hint) {
+                hint.textContent = starHints[soSao] || '';
+            }
+        };
+
+        starInput.addEventListener('change', toMauSao);
+        toMauSao();
+    }
+
+    // ---- Mua ngay: them vao gio (co lua chon) roi chuyen den trang dat hang ----
+    var buyNowBtn = document.getElementById('buyNowBtn');
+    if (buyNowBtn) {
+        buyNowBtn.addEventListener('click', function () {
+            var addBtn = document.getElementById('detailAddBtn');
+            if (!addBtn || typeof window.fetch !== 'function') {
+                return;
+            }
+
+            var qty = detailQty ? parseInt(detailQty.value, 10) : 1;
+            var idMon = parseInt(addBtn.getAttribute('data-id'), 10);
+
+            var params = layLuaChonTuyChinh(true);
+            params.set('id', idMon);
+            params.set('so_luong', Math.max(1, qty));
+
+            buyNowBtn.disabled = true;
 
             fetch('?action=cart-add', {
                 method: 'POST',
@@ -254,27 +491,34 @@
                     'X-Requested-With': 'XMLHttpRequest',
                     'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
                 },
-                body: 'id=' + encodeURIComponent(idMon) + '&so_luong=1'
+                body: params.toString()
             })
                 .then(function (response) {
                     return response.json();
                 })
                 .then(function (data) {
-                    if (data.success && typeof data.cart_count === 'number') {
-                        if (cartCountEl) {
-                            cartCountEl.textContent = data.cart_count;
-                        }
+                    if (data.success) {
+                        window.location.href = '?action=checkout';
+                    } else {
+                        showToast(data.message || 'Không thể thêm món vào giỏ hàng');
+                        buyNowBtn.disabled = false;
                     }
-
-                    showToast(data.message || 'Đã thêm vào giỏ hàng');
                 })
                 .catch(function () {
                     showToast('Có lỗi xảy ra, vui lòng thử lại');
-                })
-                .then(function () {
-                    button.disabled = false;
-                    button.classList.remove('is-loading');
+                    buyNowBtn.disabled = false;
                 });
+        });
+    }
+
+    // ---- Card mon an: bam vao de xem chi tiet ----
+    document.querySelectorAll('.dish-card[data-href]').forEach(function (card) {
+        card.addEventListener('click', function (event) {
+            if (event.target.closest('button, a, input, select, textarea')) {
+                return;
+            }
+
+            window.location.href = card.getAttribute('data-href');
         });
     });
 

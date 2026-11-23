@@ -68,6 +68,34 @@
 
                     <div class="row g-3 mb-3">
                         <div class="col-md-6">
+                            <label for="gia_goc" class="form-label fw-semibold">Giá gốc (VNĐ)</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" id="gia_goc" name="gia_goc" min="0" step="1000"
+                                       placeholder="Để trống nếu không khuyến mãi"
+                                       value="<?= htmlspecialchars($dish['gia_goc'] ?? '') ?>">
+                                <span class="input-group-text">đ</span>
+                            </div>
+                            <div class="form-text">Điền giá gốc &gt; giá bán để hiển thị khuyến mãi trên trang món.</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="thoi_gian_chuan_bi" class="form-label fw-semibold">Thời gian chuẩn bị</label>
+                            <input type="text" class="form-control" id="thoi_gian_chuan_bi" name="thoi_gian_chuan_bi"
+                                   placeholder="Ví dụ: 15 - 20 phút"
+                                   value="<?= htmlspecialchars($dish['thoi_gian_chuan_bi'] ?? '') ?>">
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label for="khau_phan" class="form-label fw-semibold">Khẩu phần ăn</label>
+                            <input type="text" class="form-control" id="khau_phan" name="khau_phan"
+                                   placeholder="Ví dụ: Phần cho 1 người"
+                                   value="<?= htmlspecialchars($dish['khau_phan'] ?? '') ?>">
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
                             <label for="so_luong_ton" class="form-label fw-semibold">Số lượng trong kho</label>
                             <input type="number" class="form-control" id="so_luong_ton" name="so_luong_ton" min="0"
                                    placeholder="50"
@@ -76,10 +104,17 @@
                         </div>
                     </div>
 
-                    <div class="mb-0">
-                        <label for="mo_ta" class="form-label fw-semibold">Mô tả món ăn & Thành phần</label>
-                        <textarea class="form-control" id="mo_ta" name="mo_ta" rows="4" 
+                    <div class="mb-3">
+                        <label for="mo_ta" class="form-label fw-semibold">Mô tả món ăn</label>
+                        <textarea class="form-control" id="mo_ta" name="mo_ta" rows="3"
                                   placeholder="Mô tả hương vị, nguyên liệu chính để khách hàng dễ lựa chọn..."><?= htmlspecialchars($dish['mo_ta'] ?? '') ?></textarea>
+                    </div>
+
+                    <div class="mb-0">
+                        <label for="thanh_phan" class="form-label fw-semibold">Thành phần nguyên liệu</label>
+                        <textarea class="form-control" id="thanh_phan" name="thanh_phan" rows="3"
+                                  placeholder="VD: Cơm tấm, sườn nướng heo than hoa, chả trứng, mỡ hành, nước mắm pha..."><?= htmlspecialchars($dish['thanh_phan'] ?? '') ?></textarea>
+                        <div class="form-text">Hiển thị ở mục "Thành phần" trên trang chi tiết món ăn.</div>
                     </div>
                 </div>
             </div>

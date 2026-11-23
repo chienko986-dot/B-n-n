@@ -56,6 +56,7 @@ $flash = get_flash();
                     <?php foreach ($cart['items'] as $item): ?>
                         <div class="cart-item"
                              data-id="<?= (int) $item['id'] ?>"
+                             data-key="<?= htmlspecialchars($item['key'] ?? (string) $item['id'], ENT_QUOTES, 'UTF-8') ?>"
                              data-price="<?= (int) round($item['don_gia']) ?>">
 
                             <!-- Anh mon an -->
@@ -73,6 +74,21 @@ $flash = get_flash();
                             <div class="cart-item-info">
                                 <span class="cart-item-cat"><?= htmlspecialchars($item['ten_danh_muc'], ENT_QUOTES, 'UTF-8') ?></span>
                                 <h3 class="cart-item-name"><?= htmlspecialchars($item['ten_mon'], ENT_QUOTES, 'UTF-8') ?></h3>
+
+                                <?php if (!empty($item['size_ten']) || !empty($item['topping_list']) || !empty($item['ghi_chu'])): ?>
+                                    <div class="cart-item-opts">
+                                        <?php if (!empty($item['size_ten'])): ?>
+                                            <span class="cart-opt-tag"><i class="bi bi-rulers"></i> <?= htmlspecialchars($item['size_ten'], ENT_QUOTES, 'UTF-8') ?></span>
+                                        <?php endif; ?>
+                                        <?php if (!empty($item['topping_list'])): ?>
+                                            <span class="cart-opt-tag"><i class="bi bi-plus-circle"></i> <?= htmlspecialchars($item['topping_list'], ENT_QUOTES, 'UTF-8') ?></span>
+                                        <?php endif; ?>
+                                        <?php if (!empty($item['ghi_chu'])): ?>
+                                            <span class="cart-opt-note"><i class="bi bi-sticky"></i> <?= htmlspecialchars($item['ghi_chu'], ENT_QUOTES, 'UTF-8') ?></span>
+                                        <?php endif; ?>
+                                    </div>
+                                <?php endif; ?>
+
                                 <span class="cart-item-price"><?= format_price($item['don_gia']) ?></span>
 
                                 <?php if ($item['het_hang']): ?>
@@ -87,6 +103,7 @@ $flash = get_flash();
                             <div class="cart-item-qty">
                                 <form method="post" action="<?= BASE_URL ?>?action=cart-update" class="qty-form js-qty-form">
                                     <input type="hidden" name="id" value="<?= (int) $item['id'] ?>">
+                                    <input type="hidden" name="key" value="<?= htmlspecialchars($item['key'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
 
                                     <button type="submit" name="huong" value="giam" class="qty-btn js-qty-minus"
                                             aria-label="Giảm số lượng">
@@ -119,6 +136,7 @@ $flash = get_flash();
                             <!-- Xoa mon -->
                             <form method="post" action="<?= BASE_URL ?>?action=cart-remove" class="cart-item-remove js-remove-form">
                                 <input type="hidden" name="id" value="<?= (int) $item['id'] ?>">
+                                <input type="hidden" name="key" value="<?= htmlspecialchars($item['key'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
                                 <button type="submit" class="btn-remove" title="Xóa khỏi giỏ hàng" aria-label="Xóa sản phẩm">
                                     <i class="bi bi-trash3"></i>
                                 </button>

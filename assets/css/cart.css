@@ -766,6 +766,24 @@
     color: var(--muted);
 }
 
+.order-line-opts {
+    display: block;
+    font-weight: 400;
+    font-size: .75rem;
+    color: var(--muted);
+    margin: .15rem 0;
+}
+
+.order-line-opts i {
+    color: var(--brand);
+    margin-right: .15rem;
+}
+
+.order-line-opts i + i,
+.order-line-opts i ~ * {
+    margin-left: .1rem;
+}
+
 .order-line-total {
     font-size: .92rem;
     font-weight: 700;
@@ -1049,5 +1067,411 @@
     .btn-remove {
         width: 100%;
         height: 40px;
+    }
+}
+
+
+/* ------------------------------------------------------------------
+   SO DIA CHI: chon nhanh dia chi khi dat hang (nhu Shopee)
+   ------------------------------------------------------------------ */
+.addr-book {
+    display: grid;
+    gap: .7rem;
+}
+
+.addr-card {
+    display: flex;
+    align-items: stretch;
+    gap: .5rem;
+    border: 1.5px solid var(--line);
+    border-radius: 16px;
+    background: #fff;
+    padding: .85rem .9rem;
+    transition: border-color .2s ease, background .2s ease, box-shadow .2s ease;
+}
+
+.addr-card.is-active {
+    border-color: var(--brand);
+    background: var(--brand-soft);
+    box-shadow: 0 0 0 3px rgba(255, 122, 89, .12);
+}
+
+.addr-card-main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    gap: .65rem;
+    align-items: flex-start;
+    margin: 0;
+    cursor: pointer;
+}
+
+.addr-card-main input[type="radio"] {
+    margin-top: .25rem;
+    accent-color: var(--brand);
+    flex-shrink: 0;
+}
+
+.addr-card-body {
+    display: grid;
+    gap: .2rem;
+    min-width: 0;
+}
+
+.addr-card-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .5rem;
+}
+
+.addr-card-head b {
+    font-size: .95rem;
+    color: var(--ink);
+}
+
+.addr-card-phone {
+    font-size: .88rem;
+    color: var(--ink-soft);
+}
+
+.addr-card-badge {
+    font-size: .7rem;
+    font-weight: 700;
+    color: var(--brand-700);
+    background: #ffe9e2;
+    border: 1px solid #ffd0c4;
+    padding: .1rem .45rem;
+    border-radius: 999px;
+}
+
+.addr-card-address {
+    font-size: .88rem;
+    color: var(--ink-soft);
+    line-height: 1.45;
+    word-break: break-word;
+}
+
+.addr-card-note {
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+    font-size: .78rem;
+    color: #8a8496;
+}
+
+.addr-card-actions {
+    display: flex;
+    flex-direction: column;
+    gap: .25rem;
+    align-items: flex-end;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.addr-card-btn {
+    border: 0;
+    background: none;
+    cursor: pointer;
+    font-size: .8rem;
+    font-weight: 600;
+    color: var(--mint-deep);
+    padding: .15rem .3rem;
+}
+
+.addr-card-btn:hover {
+    text-decoration: underline;
+}
+
+.addr-btn-del {
+    color: #d33;
+}
+
+.addr-book-add {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .4rem;
+    border: 1.5px dashed var(--line);
+    background: #fffdfc;
+    border-radius: 16px;
+    padding: .7rem;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: .9rem;
+    color: var(--ink-soft);
+    transition: border-color .2s ease, color .2s ease, background .2s ease;
+}
+
+.addr-book-add:hover {
+    border-color: var(--brand);
+    color: var(--brand-700);
+    background: var(--brand-soft);
+}
+
+.addr-saved-hint {
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    margin: .55rem 0 0;
+    font-size: .82rem;
+    color: var(--ink-soft);
+}
+
+.addr-saved-hint i {
+    color: var(--brand-700);
+}
+
+.addr-or {
+    display: flex;
+    align-items: center;
+    gap: .8rem;
+    margin: 1.4rem 0 .9rem;
+    color: #a49dbb;
+    font-size: .78rem;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+}
+
+.addr-or::before,
+.addr-or::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+}
+
+.addr-or span {
+    white-space: nowrap;
+}
+
+.addr-save-check {
+    display: flex;
+    align-items: flex-start;
+    gap: .55rem;
+    margin-top: .9rem;
+    padding: .7rem .85rem;
+    background: #fff7f4;
+    border: 1.5px solid var(--line);
+    border-radius: 14px;
+    cursor: pointer;
+}
+
+.addr-save-check[hidden] {
+    display: none;
+}
+
+.addr-save-check input {
+    margin-top: .2rem;
+    accent-color: var(--brand);
+}
+
+.addr-save-check span {
+    display: grid;
+    gap: .1rem;
+}
+
+.addr-save-check b {
+    font-size: .88rem;
+    color: var(--ink);
+}
+
+.addr-save-check small {
+    font-size: .78rem;
+    color: var(--ink-soft);
+}
+
+/* ------------------------------------------------------------------
+   MODAL THEM / SUA DIA CHI
+   ------------------------------------------------------------------ */
+.addr-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1050;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.addr-modal[hidden] {
+    display: none;
+}
+
+body.addr-modal-open {
+    overflow: hidden;
+}
+
+.addr-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(23, 18, 36, .55);
+}
+
+.addr-modal-dialog {
+    position: relative;
+    width: min(680px, 100%);
+    max-height: min(90vh, 760px);
+    overflow: auto;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 24px 60px rgba(23, 18, 36, .28);
+    animation: addrModalIn .18s ease;
+}
+
+@keyframes addrModalIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(.98);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+.addr-modal-head {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.3rem;
+    background: #fff;
+    border-bottom: 1px solid var(--line);
+}
+
+.addr-modal-head h4 {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--ink);
+}
+
+.addr-modal-close {
+    border: 0;
+    background: #f4f1f8;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    color: var(--ink-soft);
+    display: grid;
+    place-items: center;
+}
+
+.addr-modal-close:hover {
+    background: #ffe9e2;
+    color: var(--brand-700);
+}
+
+.addr-form {
+    padding: 1.2rem 1.3rem 1.4rem;
+}
+
+.addr-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.addr-form-grid .form-group-full {
+    grid-column: 1 / -1;
+}
+
+.addr-modal-foot {
+    display: flex;
+    justify-content: flex-end;
+    gap: .7rem;
+    margin-top: 1.2rem;
+}
+
+@media (max-width: 640px) {
+    .addr-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .addr-card {
+        flex-wrap: wrap;
+    }
+
+    .addr-card-actions {
+        flex-direction: row;
+        width: 100%;
+        justify-content: flex-end;
+        border-top: 1px dashed var(--line);
+        margin-top: .3rem;
+        padding-top: .35rem;
+    }
+
+    .addr-modal {
+        padding: 0;
+        align-items: flex-end;
+    }
+
+    .addr-modal-dialog {
+        border-radius: 20px 20px 0 0;
+        max-height: 92vh;
+    }
+}
+
+/* =====================================================================
+   GIO HANG - LUA CHON RIENG CUA TUNG DONG (size / topping / ghi chu)
+   ===================================================================== */
+.cart-item-opts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .35rem;
+    margin: .3rem 0 .35rem;
+}
+
+.cart-opt-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+    padding: .16rem .55rem;
+    border-radius: 999px;
+    background: var(--sky);
+    color: var(--sky-deep);
+    font-size: .74rem;
+    font-weight: 600;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.cart-opt-tag i {
+    font-size: .78rem;
+    flex: none;
+}
+
+.cart-opt-note {
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+    padding: .16rem .55rem;
+    border-radius: 999px;
+    background: var(--butter);
+    color: var(--butter-deep);
+    font-size: .74rem;
+    font-weight: 600;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-style: italic;
+}
+
+.cart-opt-note i {
+    font-style: normal;
+    flex: none;
+}
+
+@media (max-width: 640px) {
+    .cart-item-opts {
+        gap: .3rem;
     }
 }

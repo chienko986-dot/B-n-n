@@ -111,6 +111,19 @@ $status = $trangThai[$don['trang_thai']] ?? $trangThai['cho_xac_nhan'];
                             <span class="order-line-qty"><?= (int) $mon['so_luong'] ?>×</span>
                             <span class="order-line-name">
                                 <?= htmlspecialchars($mon['ten_mon'], ENT_QUOTES, 'UTF-8') ?>
+                                <?php if (!empty($mon['size_ten']) || !empty($mon['topping_list']) || !empty($mon['ghi_chu'])): ?>
+                                    <small class="order-line-opts">
+                                        <?php if (!empty($mon['size_ten'])): ?>
+                                            <i class="bi bi-rulers"></i> <?= htmlspecialchars($mon['size_ten'], ENT_QUOTES, 'UTF-8') ?>
+                                        <?php endif; ?>
+                                        <?php if (!empty($mon['topping_list'])): ?>
+                                            <i class="bi bi-plus-circle"></i> <?= htmlspecialchars($mon['topping_list'], ENT_QUOTES, 'UTF-8') ?>
+                                        <?php endif; ?>
+                                        <?php if (!empty($mon['ghi_chu'])): ?>
+                                            <i class="bi bi-sticky"></i> <?= htmlspecialchars($mon['ghi_chu'], ENT_QUOTES, 'UTF-8') ?>
+                                        <?php endif; ?>
+                                    </small>
+                                <?php endif; ?>
                                 <small><?= format_price($mon['don_gia']) ?></small>
                             </span>
                             <span class="order-line-total"><?= format_price($mon['thanh_tien']) ?></span>

@@ -2354,3 +2354,915 @@ h6 {
         animation: none;
     }
 }
+
+
+/* =====================================================================
+   CHI TIET MON AN (?action=dish&id=)
+   ===================================================================== */
+.dish-breadcrumb {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .45rem;
+    font-size: .86rem;
+    color: var(--muted);
+    margin-bottom: 1.6rem;
+}
+
+.dish-breadcrumb a {
+    color: var(--muted);
+    font-weight: 600;
+    transition: color .2s ease;
+}
+
+.dish-breadcrumb a:hover {
+    color: var(--brand-700);
+}
+
+.dish-breadcrumb i {
+    font-size: .7rem;
+    opacity: .6;
+}
+
+.dish-breadcrumb span {
+    color: var(--ink);
+    font-weight: 700;
+    max-width: 320px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.dish-detail-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    gap: 2.4rem;
+    align-items: start;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 1.8rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.dish-detail-thumb {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    border-radius: var(--radius);
+    background: linear-gradient(135deg, #ffe9e1, #f3ecff);
+}
+
+.dish-detail-thumb img {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform .5s ease;
+}
+
+.dish-detail-thumb:hover img {
+    transform: scale(1.04);
+}
+
+.dish-detail-badge {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    z-index: 2;
+    background: #fff;
+    color: var(--brand-700);
+    font-size: .72rem;
+    font-weight: 800;
+    padding: .38rem .75rem;
+    border-radius: 999px;
+    border: 2px solid #ffe0d6;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    box-shadow: 0 8px 18px -10px rgba(43, 38, 64, .35);
+}
+
+.dish-detail-badge.is-out {
+    color: #b42318;
+    border-color: #fecdca;
+}
+
+.dish-detail-title {
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    margin: .3rem 0 .8rem;
+    line-height: 1.25;
+}
+
+.dish-detail-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    font-size: .88rem;
+    color: var(--muted);
+    margin-bottom: 1rem;
+}
+
+.dish-detail-rating {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+}
+
+.dish-detail-rating i {
+    color: var(--butter-deep);
+    font-size: .9rem;
+}
+
+.dish-detail-rating b {
+    color: var(--ink);
+}
+
+.dish-detail-sold i {
+    color: var(--mint-deep);
+    margin-right: .2rem;
+}
+
+.dish-detail-stock {
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+    font-weight: 700;
+    padding: .25rem .7rem;
+    border-radius: 999px;
+    font-size: .8rem;
+}
+
+.dish-detail-stock.is-ok {
+    background: var(--mint);
+    color: var(--mint-deep);
+}
+
+.dish-detail-stock.is-out {
+    background: #fee4e2;
+    color: #b42318;
+}
+
+.dish-detail-price {
+    margin-bottom: .9rem;
+}
+
+.dish-detail-price strong {
+    font-family: var(--font-head);
+    font-size: clamp(1.7rem, 3vw, 2.3rem);
+    color: var(--brand-700);
+    font-weight: 800;
+}
+
+.dish-detail-desc {
+    color: var(--ink-soft);
+    line-height: 1.7;
+    font-size: .95rem;
+    margin-bottom: 1.1rem;
+}
+
+.dish-detail-features {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.5rem;
+    display: grid;
+    gap: .55rem;
+}
+
+.dish-detail-features li {
+    display: flex;
+    align-items: center;
+    gap: .55rem;
+    font-size: .88rem;
+    color: var(--ink-soft);
+    font-weight: 600;
+}
+
+.dish-detail-features i {
+    color: var(--brand);
+    font-size: 1rem;
+}
+
+.dish-detail-soldout {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    background: #fee4e2;
+    color: #b42318;
+    font-weight: 700;
+    padding: .9rem 1.1rem;
+    border-radius: 16px;
+    font-size: .92rem;
+}
+
+.dish-detail-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .8rem;
+}
+
+.qty-picker {
+    display: inline-flex;
+    align-items: center;
+    background: #fff;
+    border: 1.5px solid var(--line);
+    border-radius: 999px;
+    overflow: hidden;
+    height: 48px;
+}
+
+.qty-btn {
+    width: 44px;
+    height: 100%;
+    border: 0;
+    background: transparent;
+    color: var(--ink);
+    font-size: 1rem;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition: background .15s ease, color .15s ease;
+}
+
+.qty-btn:hover {
+    background: var(--brand-soft);
+    color: var(--brand-700);
+}
+
+.qty-btn:disabled {
+    opacity: .4;
+    cursor: not-allowed;
+}
+
+.qty-input {
+    width: 48px;
+    height: 100%;
+    border: 0;
+    border-left: 1.5px solid var(--line);
+    border-right: 1.5px solid var(--line);
+    text-align: center;
+    font-weight: 700;
+    font-size: .98rem;
+    color: var(--ink);
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+.qty-input::-webkit-outer-spin-button,
+.qty-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.qty-input:focus {
+    outline: none;
+    background: var(--brand-soft);
+}
+
+.dish-detail-actions .btn-add {
+    width: auto;
+    height: 48px;
+    padding: 0 1.5rem;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    font-weight: 700;
+}
+
+.dish-detail-actions .btn-ghost {
+    height: 48px;
+    padding: 0 1.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+}
+
+/* Danh muc con cho trang chi tiet */
+.dish-detail-section {
+    margin-top: 2.6rem;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 1.8rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.dish-detail-section .section-head {
+    margin-bottom: 1.4rem;
+}
+
+.dish-review-empty {
+    text-align: center;
+    padding: 2.2rem 1rem;
+    color: var(--muted);
+}
+
+.dish-review-empty i {
+    font-size: 2.6rem;
+    opacity: .5;
+    display: block;
+    margin-bottom: .7rem;
+}
+
+.dish-review-empty h3 {
+    margin: 0 0 .4rem;
+    color: var(--ink);
+    font-size: 1.15rem;
+}
+
+.dish-review-empty p {
+    margin: 0;
+    font-size: .9rem;
+}
+
+.dish-review-summary {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.4rem;
+}
+
+.dish-review-score {
+    text-align: center;
+    background: var(--bg-muted);
+    border-radius: 20px;
+    padding: 1.1rem 2rem;
+}
+
+.dish-review-score strong {
+    font-family: var(--font-head);
+    font-size: 2.4rem;
+    color: var(--brand-700);
+    line-height: 1;
+    display: block;
+}
+
+.dish-review-score span {
+    font-size: .8rem;
+    color: var(--muted);
+}
+
+.dish-review-stars {
+    color: var(--butter-deep);
+    font-size: .95rem;
+    letter-spacing: .08em;
+    margin: .3rem 0;
+}
+
+.dish-review-list {
+    display: grid;
+    gap: 1rem;
+}
+
+.dish-review-item {
+    display: flex;
+    gap: .9rem;
+    padding: 1rem 1.1rem;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+}
+
+.dish-review-avatar {
+    flex: 0 0 auto;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--brand), var(--pink-deep));
+    color: #fff;
+    font-weight: 800;
+    display: grid;
+    place-items: center;
+    font-size: 1.05rem;
+}
+
+.dish-review-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.dish-review-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .55rem;
+    margin-bottom: .3rem;
+}
+
+.dish-review-head b {
+    font-size: .92rem;
+}
+
+.dish-review-head small {
+    color: var(--muted);
+    font-size: .78rem;
+}
+
+.dish-review-body p {
+    margin: 0;
+    font-size: .9rem;
+    color: var(--ink-soft);
+    line-height: 1.6;
+}
+
+.dish-grid-related {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.dish-card[data-href] {
+    cursor: pointer;
+}
+
+.dish-name a {
+    color: inherit;
+    transition: color .2s ease;
+}
+
+.dish-name a:hover {
+    color: var(--brand-700);
+}
+
+@media (max-width: 992px) {
+    .dish-detail-layout {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        padding: 1.2rem;
+    }
+
+    .dish-grid-related {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .dish-detail-section {
+        padding: 1.2rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .dish-detail-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .qty-picker {
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    .qty-input {
+        flex: 1;
+    }
+
+    .dish-detail-actions .btn {
+        justify-content: center;
+        width: 100%;
+    }
+
+    .dish-grid-related {
+        grid-template-columns: 1fr;
+    }
+
+    .dish-breadcrumb span {
+        max-width: 160px;
+    }
+}
+
+/* =====================================================================
+   CHI TIET MON AN - PHAN MO RONG (size / topping / ghi chu / gia KM / danh gia)
+   ===================================================================== */
+
+/* ---- Gia khuyen mai ---- */
+.dish-detail-price.is-sale strong {
+    color: var(--brand);
+}
+
+.dish-detail-price del {
+    margin-left: .6rem;
+    font-size: 1.05rem;
+    color: var(--muted);
+    font-weight: 600;
+}
+
+.dish-sale-tag {
+    display: inline-block;
+    margin-left: .5rem;
+    padding: .2rem .6rem;
+    border-radius: 999px;
+    background: var(--pink-deep);
+    color: #fff;
+    font-size: .78rem;
+    font-weight: 700;
+    vertical-align: middle;
+}
+
+.dish-sale-badge {
+    position: absolute;
+    top: .7rem;
+    left: .7rem;
+    z-index: 2;
+    padding: .22rem .6rem;
+    border-radius: 999px;
+    background: var(--pink-deep);
+    color: #fff;
+    font-size: .74rem;
+    font-weight: 700;
+    box-shadow: var(--shadow-sm);
+}
+
+.dish-price.is-sale strong {
+    color: var(--brand);
+}
+
+.dish-price.is-sale del {
+    margin-left: .4rem;
+    font-size: .85rem;
+    color: var(--muted);
+    font-weight: 600;
+}
+
+/* ---- Thong tin them (thoi gian / khau phan / thanh phan) ---- */
+.dish-facts {
+    list-style: none;
+    margin: 0 0 1rem;
+    padding: .9rem 1rem;
+    border: 1px dashed var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--bg);
+    display: grid;
+    gap: .45rem;
+}
+
+.dish-facts li {
+    display: flex;
+    gap: .55rem;
+    align-items: flex-start;
+    font-size: .92rem;
+    color: var(--ink-soft);
+    line-height: 1.5;
+}
+
+.dish-facts i {
+    color: var(--brand);
+    margin-top: .15rem;
+}
+
+/* ---- Anh phu ---- */
+.dish-thumb-row {
+    display: flex;
+    gap: .6rem;
+    margin-top: .8rem;
+    flex-wrap: wrap;
+}
+
+.dish-thumb-item {
+    width: 72px;
+    height: 72px;
+    padding: 0;
+    border: 2px solid transparent;
+    border-radius: 14px;
+    overflow: hidden;
+    background: var(--bg-muted);
+    cursor: pointer;
+    transition: border-color .2s ease, transform .2s ease;
+}
+
+.dish-thumb-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.dish-thumb-item:hover {
+    transform: translateY(-2px);
+}
+
+.dish-thumb-item.is-active {
+    border-color: var(--brand);
+}
+
+/* ---- Khu mua hang ---- */
+.dish-buy-box {
+    margin-top: 1.2rem;
+    padding: 1.1rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--white);
+    box-shadow: var(--shadow-sm);
+    display: grid;
+    gap: .95rem;
+}
+
+.dish-option-group {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+}
+
+.dish-option-group legend {
+    padding: 0;
+    margin-bottom: .55rem;
+    font-weight: 700;
+    font-size: .95rem;
+    color: var(--ink);
+    font-family: var(--font-head);
+}
+
+.dish-option-group legend small {
+    font-weight: 500;
+    color: var(--muted);
+    font-size: .78rem;
+}
+
+.dish-option-req {
+    display: inline-block;
+    margin-left: .35rem;
+    padding: .1rem .5rem;
+    border-radius: 999px;
+    background: var(--brand-soft);
+    color: var(--brand);
+    font-size: .7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+}
+
+.dish-size-list,
+.dish-topping-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .55rem;
+}
+
+.dish-size-pill,
+.dish-topping-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    padding: .5rem .85rem;
+    border: 1.5px solid var(--line);
+    border-radius: 999px;
+    background: var(--white);
+    cursor: pointer;
+    font-size: .9rem;
+    color: var(--ink-soft);
+    transition: border-color .18s ease, background .18s ease, color .18s ease, transform .12s ease;
+    user-select: none;
+}
+
+.dish-size-pill:hover,
+.dish-topping-pill:hover {
+    border-color: var(--brand);
+    transform: translateY(-1px);
+}
+
+.dish-size-pill input,
+.dish-topping-pill input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.dish-size-pill:has(input:checked),
+.dish-topping-pill:has(input:checked) {
+    border-color: var(--brand);
+    background: var(--brand-soft);
+    color: var(--ink);
+}
+
+.dish-size-pill .pill-name,
+.dish-topping-pill .pill-name {
+    font-weight: 600;
+}
+
+.dish-size-pill .pill-price,
+.dish-topping-pill .pill-price {
+    font-size: .8rem;
+    color: var(--muted);
+    font-weight: 600;
+}
+
+.dish-size-pill:has(input:checked) .pill-price,
+.dish-topping-pill:has(input:checked) .pill-price {
+    color: var(--brand);
+}
+
+.dish-option-group > label,
+.dish-review-form-row > label {
+    display: block;
+    margin-bottom: .4rem;
+    font-weight: 700;
+    font-size: .92rem;
+    color: var(--ink);
+}
+
+.dish-note-input,
+.dish-review-form textarea {
+    width: 100%;
+    border: 1.5px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--bg);
+    padding: .65rem .85rem;
+    font-size: .92rem;
+    color: var(--ink);
+    resize: vertical;
+    transition: border-color .18s ease, background .18s ease;
+}
+
+.dish-note-input:focus,
+.dish-review-form textarea:focus {
+    outline: none;
+    border-color: var(--brand);
+    background: var(--white);
+}
+
+/* ---- Tam tinh ---- */
+.dish-total-line {
+    display: flex;
+    align-items: baseline;
+    gap: .5rem;
+    padding-top: .7rem;
+    border-top: 1px dashed var(--line);
+}
+
+.dish-total-line span {
+    font-size: .92rem;
+    color: var(--muted);
+}
+
+.dish-total-line strong {
+    font-size: 1.35rem;
+    color: var(--brand);
+    font-family: var(--font-head);
+}
+
+.dish-total-line small {
+    color: var(--muted);
+    font-size: .82rem;
+}
+
+/* ---- Ong khuyen them danh gia ---- */
+.dish-review-cta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.4rem;
+    padding: 1rem 1.2rem;
+    border-radius: var(--radius);
+    background: linear-gradient(120deg, var(--brand-soft), var(--bg-muted));
+    border: 1px solid var(--line);
+}
+
+.dish-review-cta.is-locked {
+    background: var(--bg);
+}
+
+.dish-review-cta i {
+    font-size: 1.6rem;
+    color: var(--brand);
+}
+
+.dish-review-cta.is-locked i {
+    color: var(--muted);
+}
+
+.dish-review-cta div {
+    flex: 1;
+    min-width: 0;
+}
+
+.dish-review-cta b {
+    display: block;
+    color: var(--ink);
+    font-family: var(--font-head);
+}
+
+.dish-review-cta p {
+    margin: .15rem 0 0;
+    font-size: .88rem;
+    color: var(--ink-soft);
+}
+
+/* ---- Form danh gia ---- */
+.dish-review-form {
+    margin-bottom: 1.6rem;
+    padding: 1.2rem;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--white);
+    box-shadow: var(--shadow-sm);
+    display: grid;
+    gap: .9rem;
+}
+
+.dish-review-form-head {
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+    flex-wrap: wrap;
+}
+
+.dish-review-form-head b {
+    font-family: var(--font-head);
+    font-size: 1.02rem;
+    color: var(--ink);
+}
+
+.dish-review-mytag {
+    padding: .16rem .6rem;
+    border-radius: 999px;
+    background: var(--mint);
+    color: var(--mint-deep);
+    font-size: .74rem;
+    font-weight: 700;
+}
+
+.dish-review-form-row.is-col {
+    display: block;
+}
+
+.dish-review-form-label {
+    display: block;
+    margin-bottom: .4rem;
+    font-weight: 700;
+    font-size: .92rem;
+    color: var(--ink);
+}
+
+.dish-star-input {
+    display: flex;
+    align-items: center;
+    gap: .3rem;
+    position: relative;
+}
+
+.dish-star-input input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.dish-star-input label {
+    cursor: pointer;
+    font-size: 1.4rem;
+    color: #d8d2e4;
+    transition: color .15s ease, transform .15s ease;
+}
+
+.dish-star-input label:hover {
+    transform: scale(1.12);
+}
+
+.dish-star-input label.is-on {
+    color: #f7b500;
+}
+
+.dish-star-hint {
+    margin-left: .5rem;
+    font-size: .88rem;
+    font-weight: 700;
+    color: var(--brand);
+}
+
+.dish-review-form-foot {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.dish-review-item.is-mine {
+    background: var(--brand-soft);
+    border-color: transparent;
+}
+
+/* ---- Mobile ---- */
+@media (max-width: 576px) {
+    .dish-buy-box {
+        padding: .9rem;
+    }
+
+    .dish-thumb-item {
+        width: 60px;
+        height: 60px;
+    }
+
+    .dish-review-cta {
+        flex-wrap: wrap;
+    }
+
+    .dish-review-cta .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .dish-sale-tag {
+        display: inline-block;
+        margin-left: 0;
+        margin-top: .35rem;
+    }
+}

@@ -8,6 +8,10 @@ match ($action) {
     // ---------- TRANG CHỦ ----------
     '/'                     => (new HomeController)->index(),
 
+    // ---------- CHI TIẾT MÓN ĂN ----------
+    'dish'                  => (new DishController)->detail(),
+    'review-post'           => $isPost ? (new DishController)->postReview() : redirect_to(BASE_URL),
+
     // ---------- TÀI KHOẢN ----------
     'register'              => (new AuthController)->register(),
     'login'                 => (new AuthController)->login(),
@@ -24,6 +28,10 @@ match ($action) {
     'checkout'              => (new CheckoutController)->index(),
     'checkout-post'         => $isPost ? (new CheckoutController)->placeOrder() : redirect_to(BASE_URL . '?action=cart'),
     'order-success'         => (new CheckoutController)->success(),
+
+    // ---------- SO DIA CHI (chon nhanh khi dat hang) ----------
+    'address-save'           => $isPost ? (new AddressController)->save()   : redirect_to(BASE_URL . '?action=checkout'),
+    'address-delete'         => $isPost ? (new AddressController)->delete() : redirect_to(BASE_URL . '?action=checkout'),
 
     // ---------- QUẢN TRỊ VIÊN (ADMIN) ----------
     'admin'                 => (new AdminController)->dashboard(),

@@ -62,6 +62,25 @@
                                     <td>
                                         <div class="fw-bold text-dark"><?= htmlspecialchars($item['ten_mon']) ?></div>
                                         <small class="text-muted"><?= htmlspecialchars($item['ten_danh_muc'] ?? '') ?></small>
+                                        <?php if (!empty($item['size_ten']) || !empty($item['topping_list']) || !empty($item['ghi_chu'])): ?>
+                                            <div class="small mt-1">
+                                                <?php if (!empty($item['size_ten'])): ?>
+                                                    <span class="badge bg-light text-dark border me-1">
+                                                        <i class="bi bi-rulers"></i> <?= htmlspecialchars($item['size_ten']) ?>
+                                                    </span>
+                                                <?php endif; ?>
+                                                <?php if (!empty($item['topping_list'])): ?>
+                                                    <span class="badge bg-light text-dark border me-1">
+                                                        <i class="bi bi-plus-circle"></i> <?= htmlspecialchars($item['topping_list']) ?>
+                                                    </span>
+                                                <?php endif; ?>
+                                                <?php if (!empty($item['ghi_chu'])): ?>
+                                                    <div class="text-muted fst-italic mt-1">
+                                                        <i class="bi bi-sticky"></i> <?= htmlspecialchars($item['ghi_chu']) ?>
+                                                    </div>
+                                                <?php endif; ?>
+                                            </div>
+                                        <?php endif; ?>
                                     </td>
                                     <td class="text-end"><?= format_price($item['don_gia']) ?></td>
                                     <td class="text-center">

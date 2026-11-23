@@ -60,6 +60,8 @@
         return {
             el: cartItem,
             id: parseInt(cartItem.getAttribute('data-id'), 10),
+            // Key dong gio hang (id|size|toppings|ghi_chu) - dong cu khong co thi lay id
+            key: cartItem.getAttribute('data-key') || cartItem.getAttribute('data-id') || '',
             gia: parseFloat(cartItem.getAttribute('data-price')) || 0,
             input: input,
             soLuong: input ? (parseInt(input.value, 10) || 1) : 1,
@@ -194,6 +196,7 @@
         capNhatTong();
 
         guiForm(form, {
+            key: dong.key,
             id: dong.id,
             so_luong: moi,
             huong: ''
@@ -232,6 +235,7 @@
         }
 
         guiForm(form, {
+            key: dong.key,
             id: dong.id,
             so_luong: moi,
             huong: ''
@@ -261,6 +265,7 @@
         var dong = layDong(form.closest('.cart-item'));
 
         guiForm(form, {
+            key: dong.key,
             id: dong.id,
             so_luong: dong.soLuong,
             huong: ''
@@ -281,10 +286,12 @@
 
         event.preventDefault();
 
-        var id = form.querySelector('input[name="id"]').value;
+        var keyInput = form.querySelector('input[name="key"]');
+        var idInput = form.querySelector('input[name="id"]');
+        var key = keyInput ? keyInput.value : (idInput ? idInput.value : '');
         var cartItem = form.closest('.cart-item');
 
-        guiForm(form, { id: id }).then(function (res) {
+        guiForm(form, { key: key, id: idInput ? idInput.value : '' }).then(function (res) {
             if (!res || !res.success) {
                 thongBao((res && res.message) || 'Không xóa được sản phẩm', true);
                 return;

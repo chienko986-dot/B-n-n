@@ -27,7 +27,8 @@ class OrderModel extends BaseModel
      * Tao don hang moi.
      *
      * @param array $khachHang ['ho_ten','so_dien_thoai','email','dia_chi','ghi_chu',
-     *                         'tinh_id','huyen_id','xa_id','so_nha']
+     *                         'tinh_id','huyen_id','xa_id','so_nha',
+     *                         'nguoidung_id','diachi_id']
      * @param array $chiTiet   [['id' => id_mon, 'so_luong' => 2], ...]
      * @param int   $phiGiaoHang
      * @param string $phuongThuc 'tien_mat' | 'chuyen_khoan'
@@ -46,6 +47,8 @@ class OrderModel extends BaseModel
         try {
             $tongTienHang = 0;
             $monDaChon     = [];
+            $tonTheoMon    = [];   // tong so luong can cho tung mon (1 mon co the nhieu dong)
+            $tenTheoMon    = [];
 
             // ---- Buoc 1: doc gia tu CSDL va kiem tra ton kho (khoa dong FOR UPDATE) ----
             foreach ($chiTiet as $item) {
@@ -73,26 +76,44 @@ class OrderModel extends BaseModel
                     throw new Exception('Món ăn không tồn tại hoặc đã ngừng bán.');
                 }
 
-                if ((int) $mon['so_luong_ton'] < $soLuong) {
-                    throw new Exception(sprintf(
-                        'Món "%s" chỉ còn %d phần, vui lòng giảm số lượng.',
-                        $mon['ten_mon'],
-                        (int) $mon['so_luong_ton']
-                    ));
+                // Don gia: cart_details() da tinh xong size / topping (lay tu CSDL) -> dung truc tiep;
+                // khong co thi lay gia mon.
+                $donGia = isset($item['don_gia']) ? (float) $item['don_gia'] : (float) $mon['gia'];
+
+                if ($donGia < 0) {
+                    $donGia = (float) $mon['gia'];
                 }
 
-                $donGia    = (float) $mon['gia'];
                 $thanhTien = $donGia * $soLuong;
 
                 $tongTienHang += $thanhTien;
 
-                $monDaChon[$idMon] = [
-                    'id'        => $idMon,
-                    'ten_mon'   => $mon['ten_mon'],
-                    'so_luong'  => $soLuong,
-                    'don_gia'   => $donGia,
-                    'thanh_tien'=> $thanhTien,
+                $tonTheoMon[$idMon] = ($tonTheoMon[$idMon] ?? 0) + $soLuong;
+                $tenTheoMon[$idMon] = $mon['ten_mon'];
+                $tonKhoMon[$idMon]  = (int) $mon['so_luong_ton'];
+
+                // Dong gio hang nay co lua chon size / topping / ghi chu (tu trang chi tiet mon)
+                $monDaChon[] = [
+                    'id'            => $idMon,
+                    'ten_mon'       => $mon['ten_mon'],
+                    'so_luong'      => $soLuong,
+                    'don_gia'       => $donGia,
+                    'thanh_tien'    => $thanhTien,
+                    'size_ten'      => (string) ($item['size_ten'] ?? ''),
+                    'topping_list'  => (string) ($item['topping_list'] ?? ''),
+                    'ghi_chu'       => (string) ($item['ghi_chu'] ?? ''),
                 ];
+            }
+
+            // Kiem tra ton kho theo TONG so luong cua tung mon (1 mon co the xuat hien nhieu dong)
+            foreach ($tonTheoMon as $idMon => $tongCan) {
+                if (($tonKhoMon[$idMon] ?? 0) < $tongCan) {
+                    throw new Exception(sprintf(
+                        'Món "%s" chỉ còn %d phần, vui lòng giảm số lượng.',
+                        $tenTheoMon[$idMon],
+                        $tonKhoMon[$idMon]
+                    ));
+                }
             }
 
             // ---- Buoc 2: tao ma don hang rieng biet ----
@@ -120,7 +141,7 @@ class OrderModel extends BaseModel
                              nguoidung_id, diachi_id, ngay_dat,
                              tong_tien, phi_giao_hang, trang_thai, ghi_chu)
                         VALUES (?, ?, ?, ?, ?" . str_repeat(', ?', count($giaTriDiaChinh)) . ",
-                                NULL, NULL, NOW(), ?, ?, 'cho_xac_nhan', ?)";
+                                ?, ?, NOW(), ?, ?, 'cho_xac_nhan', ?)";
 
                 $stmt = $this->pdo->prepare($sql);
                 $stmt->execute(array_merge([
@@ -130,6 +151,8 @@ class OrderModel extends BaseModel
                     $khachHang['email'],
                     $khachHang['dia_chi'],
                 ], $giaTriDiaChinh, [
+                    $khachHang['nguoidung_id'] ?? null,
+                    $khachHang['diachi_id'] ?? null,
                     $tongTienHang,
                     (float) $phiGiaoHang,
                     $khachHang['ghi_chu'] ?? null,
@@ -138,9 +161,11 @@ class OrderModel extends BaseModel
                 $sql = "INSERT INTO donhang
                             (nguoidung_id, diachi_id, ngay_dat,
                              tong_tien, phi_giao_hang, trang_thai, ghi_chu)
-                        VALUES (NULL, NULL, NOW(), ?, ?, 'cho_xac_nhan', ?)";
+                        VALUES (?, ?, NOW(), ?, ?, 'cho_xac_nhan', ?)";
                 $stmt = $this->pdo->prepare($sql);
                 $stmt->execute([
+                    $khachHang['nguoidung_id'] ?? null,
+                    $khachHang['diachi_id'] ?? null,
                     $tongTienHang,
                     (float) $phiGiaoHang,
                     $khachHang['ghi_chu'] ?? null,
@@ -151,8 +176,9 @@ class OrderModel extends BaseModel
 
             // ---- Buoc 4: luu chi tiet don hang + tru ton kho ----
             $sqlChiTiet = "INSERT INTO chitiet_donhang
-                                (donhang_id, monan_id, so_luong, don_gia, thanh_tien)
-                           VALUES (?, ?, ?, ?, ?)";
+                                (donhang_id, monan_id, so_luong, don_gia, thanh_tien,
+                                 size_ten, topping_list, ghi_chu)
+                           VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
             $sqlTonKho = "UPDATE monan
                           SET so_luong_ton = so_luong_ton - ?
@@ -166,6 +192,9 @@ class OrderModel extends BaseModel
                     $mon['so_luong'],
                     $mon['don_gia'],
                     $mon['thanh_tien'],
+                    $mon['size_ten'] !== '' ? mb_substr($mon['size_ten'], 0, 50, 'UTF-8') : null,
+                    $mon['topping_list'] !== '' ? mb_substr($mon['topping_list'], 0, 500, 'UTF-8') : null,
+                    $mon['ghi_chu'] !== '' ? mb_substr($mon['ghi_chu'], 0, 255, 'UTF-8') : null,
                 ]);
 
                 $stmt = $this->pdo->prepare($sqlTonKho);

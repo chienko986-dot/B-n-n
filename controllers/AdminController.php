@@ -101,9 +101,13 @@ class AdminController
             'ten_mon'      => '',
             'danhmuc_id'   => '',
             'gia'          => '',
+            'gia_goc'      => '',
             'so_luong_ton' => 50,
             'trang_thai'   => 1,
             'mo_ta'        => '',
+            'thanh_phan'   => '',
+            'khau_phan'    => '',
+            'thoi_gian_chuan_bi' => '',
             'hinh_anh'     => '',
         ];
 
@@ -114,9 +118,13 @@ class AdminController
                 $tenMon = trim($_POST['ten_mon'] ?? '');
                 $danhmucId = (int) ($_POST['danhmuc_id'] ?? 0);
                 $gia = (float) ($_POST['gia'] ?? 0);
+                $giaGoc = trim($_POST['gia_goc'] ?? '') !== '' ? (float) $_POST['gia_goc'] : null;
                 $soLuongTon = (int) ($_POST['so_luong_ton'] ?? 0);
                 $trangThai = isset($_POST['trang_thai']) ? 1 : 0;
                 $moTa = trim($_POST['mo_ta'] ?? '');
+                $thanhPhan = trim($_POST['thanh_phan'] ?? '');
+                $khauPhan = trim($_POST['khau_phan'] ?? '');
+                $thoiGian = trim($_POST['thoi_gian_chuan_bi'] ?? '');
                 $imagePath = trim($_POST['hinh_anh_url'] ?? '');
 
                 if ($tenMon === '') {
@@ -125,6 +133,8 @@ class AdminController
                     $error = 'Vui lòng chọn danh mục món ăn.';
                 } elseif ($gia < 0) {
                     $error = 'Giá bán không được âm.';
+                } elseif ($giaGoc !== null && $giaGoc < 0) {
+                    $error = 'Giá gốc không được âm.';
                 } else {
                     // Xử lý upload ảnh nếu có
                     if (!empty($_FILES['hinh_anh']['name'])) {
@@ -140,7 +150,11 @@ class AdminController
                             'danhmuc_id'   => $danhmucId,
                             'ten_mon'      => $tenMon,
                             'gia'          => $gia,
+                            'gia_goc'      => $giaGoc,
                             'mo_ta'        => $moTa,
+                            'thanh_phan'   => $thanhPhan,
+                            'khau_phan'    => $khauPhan,
+                            'thoi_gian_chuan_bi' => $thoiGian,
                             'hinh_anh'     => $imagePath,
                             'so_luong_ton' => $soLuongTon,
                             'trang_thai'   => $trangThai,
@@ -156,9 +170,13 @@ class AdminController
                     'ten_mon'      => $tenMon,
                     'danhmuc_id'   => $danhmucId,
                     'gia'          => $gia,
+                    'gia_goc'      => $giaGoc,
                     'so_luong_ton' => $soLuongTon,
                     'trang_thai'   => $trangThai,
                     'mo_ta'        => $moTa,
+                    'thanh_phan'   => $thanhPhan,
+                    'khau_phan'    => $khauPhan,
+                    'thoi_gian_chuan_bi' => $thoiGian,
                     'hinh_anh'     => $imagePath,
                 ];
             }
@@ -197,9 +215,13 @@ class AdminController
                 $tenMon = trim($_POST['ten_mon'] ?? '');
                 $danhmucId = (int) ($_POST['danhmuc_id'] ?? 0);
                 $gia = (float) ($_POST['gia'] ?? 0);
+                $giaGoc = trim($_POST['gia_goc'] ?? '') !== '' ? (float) $_POST['gia_goc'] : null;
                 $soLuongTon = (int) ($_POST['so_luong_ton'] ?? 0);
                 $trangThai = isset($_POST['trang_thai']) ? 1 : 0;
                 $moTa = trim($_POST['mo_ta'] ?? '');
+                $thanhPhan = trim($_POST['thanh_phan'] ?? '');
+                $khauPhan = trim($_POST['khau_phan'] ?? '');
+                $thoiGian = trim($_POST['thoi_gian_chuan_bi'] ?? '');
                 $imagePath = $dish['hinh_anh'];
 
                 if (!empty($_POST['hinh_anh_url'])) {
@@ -212,6 +234,8 @@ class AdminController
                     $error = 'Vui lòng chọn danh mục món ăn.';
                 } elseif ($gia < 0) {
                     $error = 'Giá bán không được âm.';
+                } elseif ($giaGoc !== null && $giaGoc < 0) {
+                    $error = 'Giá gốc không được âm.';
                 } else {
                     if (!empty($_FILES['hinh_anh']['name'])) {
                         try {
@@ -226,7 +250,11 @@ class AdminController
                             'danhmuc_id'   => $danhmucId,
                             'ten_mon'      => $tenMon,
                             'gia'          => $gia,
+                            'gia_goc'      => $giaGoc,
                             'mo_ta'        => $moTa,
+                            'thanh_phan'   => $thanhPhan,
+                            'khau_phan'    => $khauPhan,
+                            'thoi_gian_chuan_bi' => $thoiGian,
                             'hinh_anh'     => $imagePath,
                             'so_luong_ton' => $soLuongTon,
                             'trang_thai'   => $trangThai,
@@ -242,9 +270,13 @@ class AdminController
                     'ten_mon'      => $tenMon,
                     'danhmuc_id'   => $danhmucId,
                     'gia'          => $gia,
+                    'gia_goc'      => $giaGoc,
                     'so_luong_ton' => $soLuongTon,
                     'trang_thai'   => $trangThai,
                     'mo_ta'        => $moTa,
+                    'thanh_phan'   => $thanhPhan,
+                    'khau_phan'    => $khauPhan,
+                    'thoi_gian_chuan_bi' => $thoiGian,
                     'hinh_anh'     => $imagePath,
                 ]);
             }

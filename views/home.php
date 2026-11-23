@@ -127,12 +127,23 @@ $dishes = [
 
 $categoryCounts = array_count_values(array_column($dishes, 'category'));
 
+$flash = get_flash();
+
 $steps = [
     ['icon' => 'bi-hand-index-thumb', 'title' => 'Chọn món yêu thích', 'desc' => 'Lướt thực đơn, thêm món vào giỏ chỉ với một chạm.'],
     ['icon' => 'bi-credit-card-2-front', 'title' => 'Thanh toán dễ dàng', 'desc' => 'Thanh toán khi nhận hàng hoặc chuyển khoản, ví điện tử.'],
     ['icon' => 'bi-scooter', 'title' => 'Nhận món tận cửa', 'desc' => 'Tài xế giao trong 20 phút, món nóng hổi, chuẩn vị.'],
 ];
 ?>
+
+<?php if ($flash): ?>
+    <div class="container" style="margin-top: 1rem;">
+        <div class="alert alert-<?= $flash['type'] === 'error' ? 'danger' : 'success' ?> shop-alert" role="alert">
+            <i class="bi <?= $flash['type'] === 'error' ? 'bi-exclamation-circle-fill' : 'bi-check-circle-fill' ?>"></i>
+            <?= htmlspecialchars($flash['message'], ENT_QUOTES, 'UTF-8') ?>
+        </div>
+    </div>
+<?php endif; ?>
 
 <section class="hero-wrap">
     <div class="container">
@@ -332,6 +343,7 @@ $steps = [
             <?php foreach ($dishes as $dish): ?>
                 <article class="dish-card reveal"
                     data-id="<?= (int) $dish['id'] ?>"
+                    data-href="<?= BASE_URL ?>?action=dish&id=<?= (int) $dish['id'] ?>"
                     data-category="<?= htmlspecialchars($dish['category'], ENT_QUOTES, 'UTF-8') ?>"
                     data-price="<?= $dish['price'] ?>"
                     data-old-price="<?= $dish['old_price'] ?>"
@@ -349,7 +361,9 @@ $steps = [
                     </div>
                     <div class="dish-body">
                         <span class="dish-category"><?= $dish['category'] ?></span>
-                        <h3 class="dish-name"><?= $dish['name'] ?></h3>
+                        <h3 class="dish-name">
+                            <a href="<?= BASE_URL ?>?action=dish&id=<?= (int) $dish['id'] ?>"><?= $dish['name'] ?></a>
+                        </h3>
                         <p class="dish-desc"><?= $dish['desc'] ?></p>
                         <div class="dish-meta">
                             <span><i class="bi bi-star-fill"></i> <?= $dish['rating'] ?></span>

@@ -51,8 +51,11 @@ if (!function_exists('cart_details')) {
      * Doc gio hang trong session va tinh tien TUYET DOI tu CSDL.
      * Khong lay gia/gui tu trinh duyet.
      *
+     * Moi dong co the co lua chon: size / topping / ghi chu.
+     * Don gia = gia mon + gia tang size + tong gia topping (lay tu CSDL).
+     *
      * @return array [
-     *   'items'          => danh sach mon da format,
+     *   'items'          => danh sach mon da format (co key / size_ten / topping_list / ghi_chu),
      *   'so_mon'         => so dong mon,
      *   'so_luong'       => tong so luong,
      *   'tong_tien_hang' => tong tien hang,
@@ -78,29 +81,71 @@ if (!function_exists('cart_details')) {
         }
 
         $productModel = new ProductModel();
-        $danhSachMon  = $productModel->findManyByIds(CartModel::ids());
+        $idTrongGio   = CartModel::ids();
+        $danhSachMon  = $productModel->findManyByIds($idTrongGio);
 
-        foreach ($gioHang as $idMon => $dong) {
+        // Lay size / topping cho cac mon trong gio (2 query cho toan bo gio)
+        $dishModel    = new DishModel();
+        $sizeTheoMon  = $dishModel->sizesFor($idTrongGio);
+        $topTheoMon   = $dishModel->toppingsFor($idTrongGio);
+
+        foreach ($gioHang as $key => $dong) {
+            $idMon = (int) ($dong['id'] ?? $key);
+
             // Mon an da bi xoa hoac ngung ban -> xoa khoi gio hang
             if (!isset($danhSachMon[$idMon])) {
-                CartModel::remove($idMon);
+                CartModel::remove($key);
                 continue;
             }
 
             $mon     = $danhSachMon[$idMon];
-            $soLuong = max(1, (int) $dong['so_luong']);
+            $soLuong = max(1, (int) ($dong['so_luong'] ?? 1));
             $donGia  = (float) $mon['gia'];
 
+            // ---- Lua chon: size (chi tinh size con ban) ----
+            $sizeTen = null;
+            $sizeId  = (int) ($dong['size_id'] ?? 0);
+
+            if ($sizeId > 0) {
+                foreach (($sizeTheoMon[$idMon] ?? []) as $size) {
+                    if ((int) $size['id'] === $sizeId) {
+                        $sizeTen = (string) $size['ten_size'];
+                        $donGia += (float) $size['gia_tang'];
+                        break;
+                    }
+                }
+            }
+
+            // ---- Lua chon: topping (chi tinh topping con ban) ----
+            $topNames   = [];
+            $topIdsChon = array_values(array_unique(array_filter(array_map(
+                'intval',
+                (array) ($dong['topping_ids'] ?? [])
+            ))));
+
+            foreach (($topTheoMon[$idMon] ?? []) as $top) {
+                if (in_array((int) $top['id'], $topIdsChon, true)) {
+                    $topNames[] = (string) $top['ten_topping'];
+                    $donGia    += (float) $top['gia'];
+                }
+            }
+
+            $ghiChu = trim((string) ($dong['ghi_chu'] ?? ''));
+
             $ketQua['items'][] = [
-                'id'           => (int) $mon['id'],
-                'ten_mon'      => $mon['ten_mon'],
-                'ten_danh_muc' => $mon['ten_danh_muc'],
-                'hinh_anh'     => $mon['hinh_anh'],
-                'don_gia'      => $donGia,
-                'so_luong'     => $soLuong,
-                'thanh_tien'   => $donGia * $soLuong,
-                'ton_kho'      => (int) $mon['so_luong_ton'],
-                'het_hang'     => (int) $mon['so_luong_ton'] < $soLuong,
+                'id'            => (int) $mon['id'],
+                'key'           => (string) $key,
+                'ten_mon'       => $mon['ten_mon'],
+                'ten_danh_muc'  => $mon['ten_danh_muc'],
+                'hinh_anh'      => $mon['hinh_anh'],
+                'don_gia'       => $donGia,
+                'so_luong'      => $soLuong,
+                'thanh_tien'    => $donGia * $soLuong,
+                'ton_kho'       => (int) $mon['so_luong_ton'],
+                'het_hang'      => (int) $mon['so_luong_ton'] < $soLuong,
+                'size_ten'      => $sizeTen,
+                'topping_list'  => implode(', ', $topNames),
+                'ghi_chu'       => $ghiChu,
             ];
 
             $ketQua['so_mon']       += 1;
