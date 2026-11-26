@@ -337,7 +337,7 @@ $steps = [
                     data-old-price="<?= $dish['old_price'] ?>"
                     data-sold="<?= $dish['sold'] ?>"
                     data-rating="<?= $dish['rating'] ?>"
-                    data-search="<?= htmlspecialchars($dish['name'] . ' ' . $dish['desc'] . ' ' . $dish['category'], ENT_QUOTES, 'UTF-8') ?>">
+                    data-search="<?= htmlspecialchars($dish['name'] . ' ' . $dish['desc'], ENT_QUOTES, 'UTF-8') ?>">
                     <div class="dish-thumb <?= $dish['tone'] ?>">
                         <i class="bi <?= $dish['icon'] ?> dish-fallback"></i>
                         <img src="<?= BASE_URL . $dish['image'] ?>" alt="<?= $dish['name'] ?>" loading="lazy"
