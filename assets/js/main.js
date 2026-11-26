@@ -342,9 +342,9 @@
                 var isMatch = matchesQuery && matchesCategory;
 
                 card.classList.toggle('is-hidden', !isMatch);
+                card.classList.toggle('is-visible', isMatch);
 
                 if (isMatch) {
-                    card.classList.add('is-visible');
                     visible += 1;
                 }
             });
