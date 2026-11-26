@@ -142,13 +142,9 @@ h6 {
 .brand-badge {
     width: 46px;
     height: 46px;
-    display: grid;
-    place-items: center;
-    border-radius: 16px;
-    color: #fff;
-    font-size: 1.35rem;
-    background: linear-gradient(135deg, #ffa07e, var(--pink-deep));
-    box-shadow: var(--shadow-pink);
+    display: block;
+    flex: 0 0 46px;
+    object-fit: contain;
 }
 
 .brand-text {

@@ -21,6 +21,16 @@
         </a>
     </li>
     <li class="nav-item">
+        <a class="nav-link <?= $currentStatus === 'dang_chuan_bi' ? 'active bg-info text-dark' : 'bg-white border text-dark' ?>" href="<?= BASE_URL ?>?action=admin/orders&status=dang_chuan_bi<?= !empty($search) ? '&search=' . urlencode($search) : '' ?>">
+            <i class="bi bi-fire me-1"></i>Quán đang chuẩn bị món <span class="badge bg-light text-dark ms-1"><?= $statusCounts['dang_chuan_bi'] ?? 0 ?></span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link <?= $currentStatus === 'cho_shipper_lay' ? 'active bg-secondary' : 'bg-white border text-dark' ?>" href="<?= BASE_URL ?>?action=admin/orders&status=cho_shipper_lay<?= !empty($search) ? '&search=' . urlencode($search) : '' ?>">
+            <i class="bi bi-box-seam me-1"></i>Đang đợi shipper đến lấy <span class="badge bg-light text-dark ms-1"><?= $statusCounts['cho_shipper_lay'] ?? 0 ?></span>
+        </a>
+    </li>
+    <li class="nav-item">
         <a class="nav-link <?= $currentStatus === 'dang_giao' ? 'active bg-primary' : 'bg-white border text-dark' ?>" 
            href="<?= BASE_URL ?>?action=admin/orders&status=dang_giao<?= !empty($search) ? '&search=' . urlencode($search) : '' ?>">
             <i class="bi bi-truck me-1"></i>Đang giao 
@@ -146,13 +156,13 @@
                                 <form method="post" action="<?= BASE_URL ?>?action=admin/orders/update-status" class="d-inline-block">
                                     <input type="hidden" name="_csrf_token" value="<?= htmlspecialchars(csrf_token(), ENT_QUOTES, 'UTF-8') ?>">
                                     <input type="hidden" name="id" value="<?= $order['id'] ?>">
-                                    <select name="trang_thai" class="form-select form-select-sm" 
-                                            onchange="if(confirm('Cập nhật trạng thái đơn #<?= $order['id'] ?>?')) { this.form.submit(); } else { this.value='<?= $order['trang_thai'] ?>'; }"
+                                    <select name="trang_thai" class="form-select form-select-sm" <?= empty($order['next_statuses']) ? 'disabled' : '' ?>
+                                            onchange="if(confirm('Cập nhật trạng thái đơn #<?= $order['id'] ?>?')) { this.form.submit(); } else { this.selectedIndex=0; }"
                                             style="font-size: 0.82rem; font-weight: 600;">
-                                        <option value="cho_xac_nhan" <?= $order['trang_thai'] === 'cho_xac_nhan' ? 'selected' : '' ?>>⏳ Chờ xác nhận</option>
-                                        <option value="dang_giao" <?= $order['trang_thai'] === 'dang_giao' ? 'selected' : '' ?>>🚚 Đang giao</option>
-                                        <option value="hoan_thanh" <?= $order['trang_thai'] === 'hoan_thanh' ? 'selected' : '' ?>>✅ Hoàn thành</option>
-                                        <option value="huy" <?= $order['trang_thai'] === 'huy' ? 'selected' : '' ?>>❌ Hủy đơn</option>
+                                        <option value="" selected disabled><?= htmlspecialchars(order_status_label($order['trang_thai']), ENT_QUOTES, 'UTF-8') ?></option>
+                                        <?php foreach ($order['next_statuses'] as $nextStatus): ?>
+                                            <option value="<?= htmlspecialchars($nextStatus, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars(order_status_label($nextStatus), ENT_QUOTES, 'UTF-8') ?></option>
+                                        <?php endforeach; ?>
                                     </select>
                                 </form>
                             </td>

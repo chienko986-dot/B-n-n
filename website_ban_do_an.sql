@@ -90,7 +90,7 @@ CREATE TABLE DONHANG (
     ngay_dat        DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     tong_tien       DECIMAL(12,2) NOT NULL DEFAULT 0,
     phi_giao_hang   DECIMAL(12,2) NOT NULL DEFAULT 0,
-    trang_thai      ENUM('cho_xac_nhan', 'dang_giao', 'hoan_thanh', 'huy')
+    trang_thai      ENUM('cho_xac_nhan', 'dang_chuan_bi', 'cho_shipper_lay', 'dang_giao', 'hoan_thanh', 'huy')
                     NOT NULL DEFAULT 'cho_xac_nhan',
     ghi_chu         TEXT,
     CONSTRAINT fk_donhang_nguoidung

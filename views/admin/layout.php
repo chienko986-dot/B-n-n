@@ -24,9 +24,7 @@
     <!-- Sidebar -->
     <aside class="admin-sidebar" id="adminSidebar">
         <a href="<?= BASE_URL ?>?action=admin" class="admin-sidebar-brand">
-            <div class="admin-brand-icon">
-                <i class="bi bi-bowl-hot-fill"></i>
-            </div>
+            <img class="admin-brand-icon" src="<?= BASE_URL ?>assets/images/anlame-mark.svg" alt="">
             <div>
                 <div class="admin-brand-name">An<span>LaMe</span></div>
                 <span class="admin-brand-badge">Admin Panel</span>

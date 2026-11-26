@@ -377,24 +377,64 @@ class OrderModel extends BaseModel
         return $stmt->fetchAll();
     }
 
+    public function getAllowedNextStatuses($currentStatus)
+    {
+        $transitions = [
+            'cho_xac_nhan' => ['dang_chuan_bi', 'huy'],
+            'dang_chuan_bi' => ['cho_shipper_lay', 'huy'],
+            'cho_shipper_lay' => ['dang_giao', 'huy'],
+            'dang_giao'    => ['hoan_thanh', 'huy'],
+            'hoan_thanh'   => [],
+            'huy'          => [],
+        ];
+
+        return $transitions[$currentStatus] ?? [];
+    }
+
     public function updateStatus($id, $status)
     {
-        $allowed = ['cho_xac_nhan', 'dang_giao', 'hoan_thanh', 'huy'];
-        if (!in_array($status, $allowed, true)) {
+        if (!in_array($status, ['cho_xac_nhan', 'dang_chuan_bi', 'cho_shipper_lay', 'dang_giao', 'hoan_thanh', 'huy'], true)) {
             return false;
         }
 
-        $stmt = $this->pdo->prepare('UPDATE DONHANG SET trang_thai = ? WHERE id = ?');
-        $success = $stmt->execute([$status, $id]);
-
-        if ($success && $status === 'hoan_thanh') {
-            $ttStmt = $this->pdo->prepare(
-                "UPDATE THANHTOAN SET trang_thai = 'da_tt', ngay_thanh_toan = NOW() WHERE donhang_id = ? AND trang_thai = 'chua_tt'"
-            );
-            $ttStmt->execute([$id]);
+        // Atomic transition guard: reject skipped, reversed, repeated, or terminal transitions.
+        $previousStatuses = match ($status) {
+            'dang_chuan_bi' => ['cho_xac_nhan'],
+            'cho_shipper_lay' => ['dang_chuan_bi'],
+            'dang_giao'  => ['cho_shipper_lay'],
+            'hoan_thanh' => ['dang_giao'],
+            'huy'        => ['cho_xac_nhan', 'dang_chuan_bi', 'cho_shipper_lay', 'dang_giao'],
+            default      => [],
+        };
+        if (!$previousStatuses) {
+            return false;
         }
 
-        return $success;
+        $placeholders = implode(',', array_fill(0, count($previousStatuses), '?'));
+        $this->pdo->beginTransaction();
+        try {
+            $stmt = $this->pdo->prepare("UPDATE DONHANG SET trang_thai = ? WHERE id = ? AND trang_thai IN ($placeholders)");
+            $stmt->execute(array_merge([$status, $id], $previousStatuses));
+            if ($stmt->rowCount() !== 1) {
+                $this->pdo->rollBack();
+                return false;
+            }
+
+            if ($status === 'hoan_thanh') {
+                $ttStmt = $this->pdo->prepare(
+                    "UPDATE THANHTOAN SET trang_thai = 'da_tt', ngay_thanh_toan = NOW() WHERE donhang_id = ? AND trang_thai = 'chua_tt'"
+                );
+                $ttStmt->execute([$id]);
+            }
+
+            $this->pdo->commit();
+            return true;
+        } catch (Throwable $e) {
+            if ($this->pdo->inTransaction()) {
+                $this->pdo->rollBack();
+            }
+            return false;
+        }
     }
 
     public function countByStatus()
@@ -402,6 +442,8 @@ class OrderModel extends BaseModel
         $counts = [
             'all'          => 0,
             'cho_xac_nhan' => 0,
+            'dang_chuan_bi' => 0,
+            'cho_shipper_lay' => 0,
             'dang_giao'    => 0,
             'hoan_thanh'   => 0,
             'huy'          => 0,
