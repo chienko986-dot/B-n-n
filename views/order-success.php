@@ -16,6 +16,8 @@ $tong    = (float) $don['tong_thanh_toan'];
 
 // Trang thai don hang bang tieng Viet
 $trangThai = [
+    'dang_chuan_bi' => ['Quán đang chuẩn bị món', 'bi-fire', 'warning'],
+    'cho_shipper_lay' => ['Đang đợi shipper đến lấy', 'bi-box-seam', 'info'],
     'cho_xac_nhan' => ['Đã tiếp nhận', 'bi-clock-history', 'warning'],
     'dang_giao'    => ['Đang giao hàng', 'bi-truck', 'info'],
     'hoan_thanh'   => ['Hoàn thành', 'bi-check-circle-fill', 'success'],

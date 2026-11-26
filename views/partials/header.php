@@ -10,6 +10,7 @@ $currentAction = $_GET['action'] ?? '/';
 
     <title><?= $title ?? 'AnLaMe - Đặt món ngon online' ?></title>
     <meta name="description" content="AnLaMe - Đặt món ăn online, giao nhanh trong 20 phút. Hàng trăm món ngon chuẩn vị mỗi ngày.">
+    <link rel="icon" type="image/svg+xml" href="<?= BASE_URL ?>assets/images/anlame-mark.svg">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -47,7 +48,7 @@ $currentAction = $_GET['action'] ?? '/';
         <nav class="navbar navbar-expand-xl main-nav">
             <div class="container">
                 <a class="navbar-brand" href="<?= BASE_URL ?>">
-                    <span class="brand-badge"><i class="bi bi-bowl-hot"></i></span>
+                    <img class="brand-badge" src="<?= BASE_URL ?>assets/images/anlame-mark.svg" alt="">
                     <span class="brand-text">An<span>LaMe</span></span>
                 </a>
 

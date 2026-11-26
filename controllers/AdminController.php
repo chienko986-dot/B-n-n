@@ -388,6 +388,10 @@ class AdminController
         ];
 
         $orders = $this->orderModel->getAll($filters);
+        foreach ($orders as &$order) {
+            $order['next_statuses'] = $this->orderModel->getAllowedNextStatuses($order['trang_thai']);
+        }
+        unset($order);
         $statusCounts = $this->orderModel->countByStatus();
 
         $this->render('orders/index', [
@@ -420,6 +424,7 @@ class AdminController
             'currentPage' => 'orders',
             'order'       => $order,
             'items'       => $items,
+            'nextStatuses' => $this->orderModel->getAllowedNextStatuses($order['trang_thai']),
         ]);
     }
 

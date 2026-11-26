@@ -136,15 +136,21 @@
 
                     <div class="mb-3">
                         <label for="trang_thai" class="form-label fw-semibold">Trạng thái đơn hàng:</label>
-                        <select name="trang_thai" id="trang_thai" class="form-select">
+                        <select name="trang_thai" id="trang_thai" class="form-select" <?= empty($nextStatuses) ? 'disabled' : '' ?>>
+                            <option value="" selected disabled><?= htmlspecialchars(order_status_label($order['trang_thai']), ENT_QUOTES, 'UTF-8') ?></option>
+                            <?php foreach ($nextStatuses as $nextStatus): ?>
+                                <option value="<?= htmlspecialchars($nextStatus, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars(order_status_label($nextStatus), ENT_QUOTES, 'UTF-8') ?></option>
+                            <?php endforeach; ?>
+                            <!--
                             <option value="cho_xac_nhan" <?= $order['trang_thai'] === 'cho_xac_nhan' ? 'selected' : '' ?>>⏳ Chờ xác nhận</option>
                             <option value="dang_giao" <?= $order['trang_thai'] === 'dang_giao' ? 'selected' : '' ?>>🚚 Đang giao hàng</option>
                             <option value="hoan_thanh" <?= $order['trang_thai'] === 'hoan_thanh' ? 'selected' : '' ?>>✅ Đã hoàn thành</option>
                             <option value="huy" <?= $order['trang_thai'] === 'huy' ? 'selected' : '' ?>>❌ Đã hủy đơn</option>
+                            -->
                         </select>
                     </div>
 
-                    <button type="submit" class="btn btn-primary w-100">
+                    <button type="submit" class="btn btn-primary w-100" <?= empty($nextStatuses) ? 'disabled' : '' ?>>
                         <i class="bi bi-check2-circle me-1"></i> Lưu trạng thái
                     </button>
                 </form>

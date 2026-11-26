@@ -269,6 +269,8 @@ if (!function_exists('order_status_label')) {
     {
         return match ($status) {
             'cho_xac_nhan' => 'Chờ xác nhận',
+            'dang_chuan_bi' => 'Quán đang chuẩn bị món',
+            'cho_shipper_lay' => 'Đang đợi shipper đến lấy',
             'dang_giao'    => 'Đang giao',
             'hoan_thanh'   => 'Hoàn thành',
             'huy'          => 'Đã hủy',
@@ -282,6 +284,8 @@ if (!function_exists('order_status_badge')) {
     {
         return match ($status) {
             'cho_xac_nhan' => '<span class="badge bg-warning text-dark"><i class="bi bi-clock-history me-1"></i>Chờ xác nhận</span>',
+            'dang_chuan_bi' => '<span class="badge bg-info text-dark"><i class="bi bi-fire me-1"></i>Quán đang chuẩn bị món</span>',
+            'cho_shipper_lay' => '<span class="badge bg-secondary"><i class="bi bi-box-seam me-1"></i>Đang đợi shipper đến lấy</span>',
             'dang_giao'    => '<span class="badge bg-primary"><i class="bi bi-truck me-1"></i>Đang giao</span>',
             'hoan_thanh'   => '<span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Hoàn thành</span>',
             'huy'          => '<span class="badge bg-danger"><i class="bi bi-x-circle me-1"></i>Đã hủy</span>',

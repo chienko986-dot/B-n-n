@@ -5,7 +5,7 @@
             <div class="row gy-4 footer-top">
                 <div class="col-lg-4 col-md-6">
                     <a class="footer-brand" href="<?= BASE_URL ?>">
-                        <span class="brand-badge"><i class="bi bi-bowl-hot"></i></span>
+                        <img class="brand-badge" src="<?= BASE_URL ?>assets/images/anlame-mark.svg" alt="">
                         <span class="brand-text">An<span>LaMe</span></span>
                     </a>
                     <p class="footer-desc">
